@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>이미지파일 저장</title>
+</head>
+<body>
+<form id="uploadForm">
+	<input type="file" name="pic" accept=".jpg,.png,.gif" onchange="validation(this)"/>
+	<button type="button" id="uploadBtn">Save</button>
+</form>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+
+	$(function(){
+
+		$('#uploadBtn').on('click', function(){
+
+			uploadFile();
+		});
+
+	});
+
+	function uploadFile(){
+
+		var form = $('#uploadForm')[0];
+		var formData = new FormData(form);
+
+		$.ajax({
+			url : '/imageFile',
+			type : 'POST',
+			data : formData,
+			contentType : false,
+			processData : false,
+			success : function(fileName){
+				alert("저장되었습니다.");
+				opener.document.userinfo.imageFileName.value = fileName;
+				opener.document.userinfo.profileImage.src = "/profile/"+fileName;
+				self.close();
+			}
+		})
+	}
+
+
+</script>
+
+</html>

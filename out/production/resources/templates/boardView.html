@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>~번 게시판 뷰</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 80vh;
+      background-color: #D3E1E8;
+
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #thTopBar {
+      margin: 20px auto 10px auto;
+      padding: 5px;
+      height: 5vh;
+      width: 90%;
+      background-color: #D9D9D9;
+    }
+    #thTopBar tr {
+      margin: auto;
+      background-color: #D9D9D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top:5px;
+    }
+
+    #thTopBar th {
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .boardFormNumber {
+      width: 100px;
+      text-align: center;
+    }
+
+    .boardFormTitle {
+      width: 400px;
+      text-align: center;
+    }
+
+    .boardFormWriter {
+      width: 150px;
+      text-align: center;
+    }
+
+    .boardFormDate {
+      width: 150px;
+      text-align: center;
+    }
+    #writeBtn{
+      float:right;
+      margin-right:7vw;
+      border:none;
+      background-color: blue;
+      color:#fff;
+      padding:5px;
+    }
+
+    #dataTable {
+      margin: auto;
+      width: 90%;
+    }
+
+    #dataTable tr {
+      margin: auto;
+      background-color: #D9D9D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #pagingWrap {
+      text-align: center;
+    }
+
+    #pagingWrap a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    #pagingWrap .nowPage {
+      color: red;
+      text-decoration: underline;
+    }
+
+    #searchBar {
+      margin: auto;
+      text-align: center;
+    }
+
+    #searchWord {
+      border: none;
+      height: 30px;
+      padding: 3px;
+    }
+
+    #searchBtn {
+      border: none;
+      padding: 5px;
+      height: 30px;
+      color: #fff;
+      background-color: blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="boardViewWrap">
+    <h2> 게시판 주제(제목) </h2>
+      <table id="thTopBar">
+        <tr>
+        <th class="boardFormNumber">글 번호</th>
+        <th class="boardFormTitle">제목</th>
+        <th class="boardFormWriter">작성자</th>
+        <th class="boardFormDate">작성일</th>
+        </tr>
+      </table>
+      <table id="dataTable">
+        <tr>
+          <td class="boardFormNumber">1</td>
+          <td class="boardFormTitle">게시판 Disign 테스트 메모</td>
+          <td class="boardFormWriter">양광석</td>
+          <td class="boardFormDate">방금 전</td>
+        </tr>
+      </table>
+
+      <div id="pagingWrap">
+        <a href="#" class="nowPage">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a>
+        <a href="#">7</a>
+        <a href="#">8</a>
+        <a href="#">9</a>
+        <a href="#">10</a>
+        <button id="writeBtn" onclick="boardWrite()">글쓰기</button>
+      </div>
+      <div id="searchBar">
+        <form action="#" method="post">
+          <input id="searchWord" type="text" name="searchText">
+          <button id="searchBtn" type="submit">검색</button>
+        </form>
+      </div>
+
+  </div>
+</body>
+
+</html>

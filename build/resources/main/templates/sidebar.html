@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>안갈켜줌</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      div {
+        outline: red 1px solid;
+      }
+      #rightSideBar {
+        position : absolute;
+        width: 300px;
+        right:0;
+        top:51px;
+        overflow-y: scroll;
+        -ms-overflow-style: none; /* 인터넷 익스플로러 */
+        scrollbar-width: none; /* 파이어폭스 */
+        background-color: #87c4e8;
+        text-align:center;
+      }
+      #rightSideBar::-webkit-scrollbar {
+        display: none; /* 크롬, 사파리, 오페라, 엣지 */
+      }
+      #sideMenuWrap{
+        display:flex;
+        align-items: center;
+        justify-content:space-between;
+      }
+      #sideMenuWrap > div{
+        width:49%;
+        height:30px;
+      }
+      #myMenuListContentContainer{
+        position:absolute;
+        top:9vh;
+        right:0;
+        background-color:aliceblue;
+        z-index: 5;
+        width:300px;
+        text-align:center;
+      }
+      .myChatContent{
+        line-height: 30px;
+        width:100%;
+        margin-bottom:5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="userMenu" style="position:relative;"><div>[[${nickName}]]</div>
+      <div id="rightSideBar" style="display:block;">
+        <div id="sideMenuWrap">
+          <div id="visitMenu" onclick="sideMenuToggle()">내가 참여한 채팅방
+          </div>
+          <div id="myProfile">내 정보 수정</div>
+        </div>
+      </div>
+      <div id="myMenuListContentContainer">
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+        <div class="myChatContent" onclick="chatRoomJoin('+data[i].id+')">'+data[i].title+'</div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WePlaceConnect</title>
+    <style>
+        *{box-sizing: border-box;margin:0;padding:0;}
+        #header{
+            width:70vw;
+            margin:auto;
+            display:flex;
+            align-items: center;
+            justify-content: space-between;
+            height:5vh;
+        }
+        #centerWrap{
+            width:70vw;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content: space-between;
+            height:80vh;
+        }
+        #centerWrap button{
+            width:300px;
+            height:600px;
+            background-color: blue;
+            color:#fff;
+            font-size:40px;
+            letter-spacing: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div>
+            대충 로고 들어갈 자리
+        </div>
+        <div>
+            WePlaceConnect
+        </div>
+        <div>
+            대충 사이드바 나오게 하는 버튼
+        </div>
+    </header>
+
+    <div id="centerWrap">
+        <button onclick="boardMap()" id="boardBtn">게시판</button>
+        <button onclick="chatMap()" id="chatBtn">채팅방</button>
+        <button onclick="scheduleMap()" id="scheduleBtn">스케쥴</button>
+    </div>
+    <script>
+        function boardMap(){
+            location.href = "boardMap";
+        }
+        function charMap(){
+
+        }
+        function scheduleMap(){
+
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>안갈켜줌 게시판 page</title>
+    <style>
+        .map_wrap {
+            position: relative;
+            width: 100%;
+            height: 1000px;
+        }
+
+        .title {
+            font-weight: bold;
+            display: block;
+        }
+
+        .hAddr {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            border-radius: 2px;
+            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1;
+            padding: 5px;
+        }
+
+        #centerAddr {
+            display: block;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        .bAddr {
+            padding: 5px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .infoWindowBox {
+            width:100%;
+            padding:5px;
+            text-align: center;
+        }
+        .infoWindowBox a{
+            color:blue;
+            text-align:center;
+            cursor:pointer;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<div id="boardCreate" style="display:none;">
+    <form action="/project/writeBoard" method="post">
+        제목 : <input type="text" name="title" required> <br>
+        <input type="hidden" name="locLng" id="locLng">
+        <input type="hidden" name="locLat" id="locLat">
+    </form>
+</div>
+<div id="map" style="width:90vw;height:80vh;margin:auto;"></div>
+
+<script
+        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ce91c2d9118a2a15e5e8e7d707649985&libraries=clusterer"></script>
+<script>
+    // Kakao Maps SDK 로딩이 완료되면 실행
+    window.onload = function () {
+        var mapContainer = document.getElementById('map');
+        var mapOption = {
+            center: new kakao.maps.LatLng(37.56682, 126.97865),
+            level: 3,
+            mapTypeId: kakao.maps.MapTypeId.ROADMAP
+        };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map,
+            averageCenter: true,
+            minLevel: 6 // 클러스터를 최소 지도 레벨 6에서 표시
+        });
+
+        var dataList = [
+            {
+                "lat": 37.566820,
+                "lng": 126.978650,
+                "index": 1
+            },
+            {
+                "lat": 37.565910,
+                "lng": 126.978640,
+                "index": 2
+            },
+            {
+                "lat": 37.567760,
+                "lng": 126.978660,
+                "index": 3
+            },
+            {
+                "lat": 37.568670,
+                "lng": 126.978675,
+                "index": 4
+            }];
+        var markers = [];
+
+        for (var i = 0; i < dataList.length; i++) {
+            var marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(dataList[i].lat, dataList[i].lng),
+                map: map
+            });
+
+            var infowindow = new kakao.maps.InfoWindow({
+                content: '<div class="infoWindowBox"style="padding:5px;text-align:center;"><a style="margin:auto;" onclick="BoardViewForm(' + dataList[i].index + ')">게시판' + dataList[i].index + '</a></div>',
+                zIndex:1
+            });
+
+            markers.push({ marker: marker, infowindow: infowindow });
+        }
+
+        // 인포윈도우를 표시하는 클로저를 만드는 함수
+        function makeOverListener(map, marker, infowindow) {
+            return function () {
+                infowindow.open(map, marker);
+            };
+        }
+
+        // 인포윈도우를 닫는 클로저를 만드는 함수
+        function makeOutListener(infowindow) {
+            return function () {
+                infowindow.close();
+            };
+        }
+        kakao.maps.event.addListener(map, 'zoom_changed', function () {
+            // 현재 줌 레벨을 가져옴
+            var currentZoomLevel = map.getLevel();
+
+            // 만약 줌 레벨이 5 이하라면 모든 인포 윈도우를 열어줌
+            if (currentZoomLevel <= 4) {
+                for (var i = 0; i < markers.length; i++) {
+                    makeOverListener(map, markers[i].marker, markers[i].infowindow)();
+                }
+            } else {
+                // 그렇지 않으면 모든 인포 윈도우를 닫음
+                for (var i = 0; i < markers.length; i++) {
+                    makeOutListener(markers[i].infowindow)();
+                }
+            }
+        });
+
+        clusterer.addMarkers(markers.map(function (item) { return item.marker; }));
+
+        var clickMarker = new kakao.maps.Marker({
+                // 지도 중심좌표에 마커를 생성
+                position: map.getCenter()
+            });
+        var clickInfowindow = new kakao.maps.InfoWindow({
+                content: '<div class="infoWindowBox"><button style="padding:5px;text-align:center;z-index:3" onclick="CreateBoard()">게시판 생성</button></div>',
+                zIndex:2
+            });
+        // 지도에 클릭 이벤트를 등록합니다
+        // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+
+            // 클릭한 위도, 경도 정보를 가져
+            var latlng = mouseEvent.latLng;
+
+
+            // 마커 위치를 클릭한 위치로 옮깁
+            clickMarker.setPosition(latlng);
+
+
+
+            // 지도에 마커를 표시
+            clickMarker.setMap(map);
+
+            clickInfowindow.open(map, clickMarker);
+        });
+    };
+
+</script>
+
+
+</body>
+
+</html>

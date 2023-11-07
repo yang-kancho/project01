@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>비밀번호 찾기</title>
+</head>
+<body>
+<form>
+	아이디 : <input type="text" id="searchId" name="searchId"><br>
+	이메일 : <input type="text" id="searchEmail" name="searchEmail">
+
+
+	<div id="searchResult"></div>
+	<div id = "updatePwd"  style="visibility:hidden;">
+		변경하실 비밀번호 : <input type="password" id="updatePassword" name="updatePwd">
+		<div id="passwordChk"></div>
+		<input type="hidden" id="updatePwdChk" value="flase">
+		<input type="hidden" id="passwordChkResult" value = "passowrdUnCheck">
+	</div>
+	<input type="button" onClick="return chkSearch()" value="찾기">
+</form>
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+	$('#updatePassword').keyup(function(){
+			var p1 = document.getElementById('updatePassword').value;
+			var p1Check = /(?=.*[0-9])(?=.*[a-zA-ZS])(?=.*?[#?!@$%^&*-]).{6,24}/;
+			if(p1==''){
+				$("#passwordChk").html('비밀번호가 비어있습니다.');
+                document.getElementById("passwordChkResult").value="passwordUnCheck"
+
+            }else if(!p1Check.test(p1)){
+                $("#passwordChk").html('특수문자,영문,숫자로 6자이상 필요');
+                document.getElementById("passwordChkResult").value="passwordUnCheck"
+            }else{
+                $("#passwordChk").html('이상없습니다.');
+                 document.getElementById("passwordChkResult").value="passwordCheck"
+            }
+		})
+
+
+</script>
+<script>
+function chkSearch(){
+	var searchId = document.getElementById("searchId").value;
+	var searchEmail = document.getElementById("searchEmail").value;
+	var updatePassword = document.getElementById("updatePassword").value;
+	var passwordChk = document.getElementById("passwordChkResult").value;
+
+	if(updatePassword == ""){
+		$.ajax({
+		url : "/idSearch",
+		type : "post",
+		data : {email : searchEmail},
+		dataType : 'text',
+		success : function(userId){
+			if(userId==searchId ){
+				document.getElementById("updatePwd").style.visibility='visible';
+				document.getElementById("searchId").readOnly=true;
+				document.getElementById("searchEmail").readOnly=true;
+				$("#searchResult").html("변경하실 비밀번호를 입력하세요");
+
+
+
+			}else if(userId!=searchId){
+				$("#searchResult").html("아이디를 찾을수가 없습니다.");
+
+			}
+		}
+	})
+	}else{
+		if(passwordChk == "passwordUnCheck"){
+			alert("비밀번호 설정이 잘못되었습니다.")
+
+	}
+
+
+
+	else{
+		$.ajax({
+		url : "/pwdUpdate",
+		type : "post",
+		data : {email : searchEmail, password : updatePassword, userid : searchId
+				},
+		dataType : 'json',
+		success : function(result){
+			if(result==1 ){
+				document.getElementById("updatePwd").style.visibility='hidden';
+				alert("변경되었습니다.");
+				self.close();
+
+			}
+		}
+	})
+	}
+	}
+}
+</script>
+</html>

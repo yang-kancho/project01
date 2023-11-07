@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>게시판 페이지</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" type="text/css">
+  <link rel="stylesheet" href="assets/dist/css/bootstrap.min.css" type="text/css">
+
+  <link href="css/font.css" rel="stylesheet" type="text/css">
+  <link href="css/theme.css" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template -->
+  <link href="css/offcanvas-navbar.css" rel="stylesheet" type="text/css">
+  <!-- 부가적인 테마 -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!--구글 폰트 링크-->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    body {
+      font-size: 14px;
+      position: relative;
+      width: 100%;
+      background-color: lightgrey;
+      /* 더 밝은 배경 색상 */
+      font-family: Arial, sans-serif;
+      /* 기본 글꼴 설정 */
+      margin: 0;
+      /* 페이지 여백 제거 */
+    }
+    a{
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .infoNotSecret{
+            color:#34a0a4;
+        }
+        .infoSecret{
+            color:#5D12D2;
+        }
+
+    .map_wrap a,
+    .map_wrap a:hover,
+    .map_wrap a:active {
+      text-decoration: none;
+    }
+
+    header {
+      margin: auto;
+      min-width: 960px;
+      width: 90%;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 51px;
+    }
+
+    .logo {
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      height: 100%;
+      width: 150px;
+      margin-left: 30px;
+      display: inline-block;
+      opacity: 0.8;
+    }
+
+    .headerMenuWrap {
+      display: inline-block;
+      color: #4B6662;
+    }
+
+    .headerMenuWrap a {
+      line-height: 50px;
+      text-decoration: none;
+      margin: 0 30px;
+      padding: 15px 50px;
+      color: black;
+    }
+
+    #boardMapLink {
+      color: blue;
+      background-color: #87C4E8;
+      font-weight: bold;
+    }
+
+    .userMenu {
+      display: inline-block;
+      margin-right: 30px;
+      cursor: pointer;
+    }
+
+    .map_wrap {
+      position: relative;
+      width: 80%;
+      height: 80vh;
+      /* 뷰포트 높이를 활용하여 전체 높이 설정 */
+    }
+
+    /* 나머지 스타일들은 이하에 추가 */
+
+    #pagingWrap {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #pagingWrap a {
+      text-decoration: none;
+      color: #007bff;
+      /* 링크 색상 변경 */
+      margin: 0 5px;
+    }
+
+    #pagingWrap .nowPage {
+      font-weight: bold;
+      /* 현재 페이지 강조 스타일 */
+    }
+
+    #searchBar {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #searchWord {
+      border: 1px solid #ccc;
+      /* 입력 필드 테두리 추가 */
+      height: 30px;
+      padding: 5px;
+      width: 60%;
+      /* 너비 조정 */
+      border-radius: 4px;
+    }
+
+
+    /**/
+    #boardCreate {
+      width: 222px;
+      height: 310px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* 세로 가운데 정렬 */
+      text-align: center;
+      background-color: slategray;
+      /* 백그라운드 색상 변경 */
+      padding: 50px 20px 50px 20px;
+      box-sizing: border-box;
+      z-index: 3;
+      border-radius: 10px;
+      box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 10px;
+    }
+
+    #searchAble {
+      margin: 15px 0 15px 0;
+    }
+
+    #boardCreateCloseBtn {
+      position: absolute;
+      font-size: 18px;
+      right: 10px;
+      top: 10px;
+      width: 28px;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #61aeff;
+    }
+
+    #boardViewWrap {
+      position: absolute;
+      top: 56%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      display: none;
+      width: 100%;
+      height: 88%;
+      overflow: scroll;
+      padding: 30px;
+      border-radius: 5px;
+    }
+
+    td {
+      border-bottom: 1px solid #5F5F5F;
+    }
+
+
+    #thTopBar,
+    #dataTable {
+      border-bottom: 1px solid #444444;
+      border-top: 1px solid #444444;
+      width: 90%;
+      height: 30px;
+      margin: auto;
+    }
+
+    /*게시판 삭제*/
+    #boardDeleteBtn {
+      position: absolute;
+
+      height: 30px;
+      border-radius: 5px;
+      background-color: #e74c3c;
+      border: none;
+      cursor: pointer;
+    }
+
+    #boardDeleteBtn:hover {
+      background-color: #c0392b;
+      color: #fff;
+    }
+
+    /*글쓰기*/
+    #writeBtn {
+      position: absolute;
+      right: 10%;
+    }
+
+    /*검색바*/
+    #searchBar {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /*검색버튼*/
+    #searchBtn {
+      border: none;
+      padding: 5px 20px;
+      /* 좀 더 큰 패딩 */
+      height: 40px;
+      /* 높이 증가 */
+      color: #fff;
+      background-color: #007bff;
+      /* 버튼 색상 변경 */
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #searchWord {
+      border: 1px solid #ccc;
+      /* 입력 필드 테두리 추가 */
+      height: 30px;
+      padding: 5px;
+      width: 60%;
+      /* 너비 조정 */
+      border-radius: 4px;
+    }
+
+    /*방문자*/
+    #boardListCountHeadTag {
+      text-align: left;
+    }
+
+    #nn {
+      border: none;
+      background: none;
+    }
+
+    /*댓글 id=CDC 닫기버튼*/
+    #CDC {
+      width: 24px;
+      height: 28px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #61aeff;
+    }
+
+    /* 댓글 등록버튼 */
+    #CMI {
+      background-color: rgba(152, 148, 148, 0.56);
+      border: none;
+      border-radius: 5px;
+    }
+
+    /*댓글 수정*/
+    #detailUpdateBtn {
+      border-radius: 5px;
+      background-color: #2ecc71;
+      border: none;
+      cursor: pointer;
+    }
+
+    #detailUpdateBtn:hover {
+      background-color: #27ae60;
+      color: #fff;
+    }
+
+    /*댓글 삭제버튼*/
+    #boardContentDeleteBtn {
+      border-radius: 5px;
+      background-color: #e74c3c;
+      border: none;
+      cursor: pointer;
+    }
+
+    #boardContentDeleteBtn:hover {
+      background-color: rgba(197, 26, 26, 0.98);
+      color: #fff;
+    }
+
+
+    /*------------------------*/
+    .cBtn {
+      border: none;
+      background-color: #61aeff;
+      border-radius: 5px;
+      width: 66px;
+      height: 27px;
+    }
+
+    .cBtn:hover {
+      background-color: #4d89c9;
+      color: #fff
+    }
+
+
+    /*=============*/
+    #boardViewCloseBtn {
+      position: absolute;
+      right: 5vw;
+      top: 4vh;
+      width: 28px;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #61aeff;
+    }
+
+    #boardDetailCloseBtn,
+    #boardContentWriteCloseBtn {
+      width: 28px;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #61aeff;
+    }
+
+
+    #boardViewCloseBtn:hover,
+    #boardCreateCloseBtn:hover,
+    #boardViewCloseBtn:hover,
+    #CDC:hover,
+    #boardDetailCloseBtn:hover,
+    #boardContentWriteCloseBtn:hover {
+      background-color: #4d89c9;
+      color: #fff
+    }
+
+    #boardViewCloseBtn:after,
+    #boardCreateCloseBtn:after,
+    #boardViewCloseBtn:after,
+    #boardDetailCloseBtn:after,
+    #boardContentWriteCloseBtn:after,
+    #CDC:after {
+      display: inline-block;
+      content: "\00d7";
+      font-size: 20px;
+    }
+
+    /**/
+
+    #dataTable tr {
+      height: 20px;
+    }
+
+    .boardFormNumber {
+      width: 10%;
+      text-align: center;
+    }
+
+    .boardFormTitle {
+      width: 50%;
+      text-align: center;
+    }
+
+    .boardFormWriter {
+      width: 15%;
+      text-align: center;
+    }
+
+    .boardFormCount {
+      width: 10%;
+      text-align: center;
+    }
+
+    .boardFormDate {
+      width: 15%;
+      text-align: center;
+    }
+
+    .boardOnPage {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+
+    #boardContentForm {
+      max-width: 700px;
+      width: 60vw;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      /* 가운데 정렬 */
+    }
+
+    .boardContentLabel {
+      font-weight: bold;
+      display: block;
+      /* 한 줄씩 표시 */
+      text-align: left;
+      /* 왼쪽 정렬 */
+    }
+
+    .boardContentinput,
+    #boardContentContent {
+      width: 90%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+    }
+
+    .boardContentinput {
+      height: 40px;
+    }
+
+    #boardContentContent {
+      height: 300px;
+    }
+
+    .boardContentSubmit {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+      /* 전체 너비 채우기 */
+    }
+
+    .boardContentSubmit:hover {
+      background-color: #0056b3;
+    }
+
+    #boardContentWriteOverlay {
+      position: absolute;
+      top: 40vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+    }
+
+    #boardDetailWrap {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f0f0f0;
+      position: absolute;
+      left: 10vw;
+      top: 80px;
+      z-index: 5;
+      transition: translate(-50%, -50%);
+      overflow: scroll;
+    }
+
+    #boardDetailTable {
+      width: 100%;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    #boardDetailTable th {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+    }
+
+    #boardDetailTable td {
+      padding: 10px;
+    }
+
+    #boardDetailTable .boardDetailTitle {
+      font-size: 24px;
+      font-weight: bold;
+      width: 50%;
+      text-align: center;
+      color:#333;
+      background-color:#d2d7df;
+      padding:3px;
+    }
+
+    #boardDetailTable .boardDetailWriter {
+      font-weight: bold;
+      width: 50%;
+    }
+
+    #boardDetailTable tr {
+      width: 100%;
+    }
+
+    #boardDetailTable td {
+      border: 1px solid #ccc;
+    }
+
+    #boardDetailCommentTable {
+      width: 90%;
+    }
+
+    #boardDetailCommentTable tr {
+      width: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #5F5F5F;
+    }
+
+    .detailBtn {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      float: right;
+    }
+
+
+    .map_wrap,
+    .map_wrap * {
+      margin: 0;
+      padding: 0;
+      font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
+      font-size: 12px;
+    }
+
+    .map_wrap a,
+    .map_wrap a:hover,
+    .map_wrap a:active {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .map_wrap {
+      position: relative;
+      width: 100%;
+      height: 500px;
+    }
+
+    #menu_wrap {
+      position: absolute;
+      top: 8vh;
+      left: 0;
+      bottom: 0;
+      width: 300px;
+      margin: 10px 0 30px 10px;
+      padding: 5px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 1;
+      font-size: 12px;
+      border-radius: 10px;
+    }
+
+    .bg_white {
+      background: #fff;
+    }
+    #keyword{
+      margin : 5px auto;
+      width:90%;
+      border-radius: 5px;
+      background-color:#edf6f9; 
+      height:40px;
+    }
+
+    #menu_wrap .option form button{
+      margin : 5px auto;
+    }
+    #placeSearchBtn{
+      width: 68%;
+      background-color:#caf0f8;
+      border-radius: 5px;
+    }
+    #placeSearchBtn:hover {
+      background-color: #00b4d8;
+      color: #fff;
+  }
+  #placeSearchCloseBtn:hover {
+    background-color: #fb6f92;
+    color: #fff;
+}
+
+    #placeSearchCloseBtn{
+      width:20%;
+      border-radius: 5px;
+      background-color: #ffc2d1;
+    }
+
+
+    #menu_wrap hr {
+      display: block;
+      height: 1px;
+      border: 0;
+      border-top: 2px solid #5F5F5F;
+      margin: 3px 0;
+    }
+
+    #menu_wrap .option {
+      text-align: center;
+    }
+
+    #menu_wrap .option p {
+      margin: 10px 0;
+    }
+
+    #menu_wrap .option button {
+      margin-left: 5px;
+    }
+
+    #placesList li {
+      list-style: none;
+    }
+
+    #placesList .item {
+      position: relative;
+      border-bottom: 1px solid #888;
+      overflow: hidden;
+      cursor: pointer;
+      min-height: 65px;
+    }
+
+    #placesList .item span {
+      display: block;
+      margin-top: 4px;
+    }
+
+    #placesList .item h5,
+    #placesList .item .info {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    #placesList .item .info {
+      padding: 10px 0 10px 55px;
+    }
+
+    #placesList .info .gray {
+      color: #8a8a8a;
+    }
+
+    #placesList .info .jibun {
+      padding-left: 26px;
+      background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+    }
+
+    #placesList .info .tel {
+      color: #009900;
+    }
+
+    #placesList .item .markerbg {
+      float: left;
+      position: absolute;
+      width: 36px;
+      height: 37px;
+      margin: 10px 0 0 10px;
+      background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+    }
+
+    #placesList .item .marker_1 {
+      background-position: 0 -10px;
+    }
+
+    #placesList .item .marker_2 {
+      background-position: 0 -56px;
+    }
+
+    #placesList .item .marker_3 {
+      background-position: 0 -102px
+    }
+
+    #placesList .item .marker_4 {
+      background-position: 0 -148px;
+    }
+
+    #placesList .item .marker_5 {
+      background-position: 0 -194px;
+    }
+
+    #placesList .item .marker_6 {
+      background-position: 0 -240px;
+    }
+
+    #placesList .item .marker_7 {
+      background-position: 0 -286px;
+    }
+
+    #placesList .item .marker_8 {
+      background-position: 0 -332px;
+    }
+
+    #placesList .item .marker_9 {
+      background-position: 0 -378px;
+    }
+
+    #placesList .item .marker_10 {
+      background-position: 0 -423px;
+    }
+
+    #placesList .item .marker_11 {
+      background-position: 0 -470px;
+    }
+
+    #placesList .item .marker_12 {
+      background-position: 0 -516px;
+    }
+
+    #placesList .item .marker_13 {
+      background-position: 0 -562px;
+    }
+
+    #placesList .item .marker_14 {
+      background-position: 0 -608px;
+    }
+
+    #placesList .item .marker_15 {
+      background-position: 0 -654px;
+    }
+
+    #pagination {
+      margin: 10px auto;
+      text-align: center;
+    }
+
+    #pagination a {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    #pagination .on {
+      font-weight: bold;
+      cursor: default;
+      color: #777;
+    }
+
+    #rightSideBar {
+      position: absolute;
+      width: 300px;
+      right: 0;
+      top: 51px;
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      /* 인터넷 익스플로러 */
+      scrollbar-width: none;
+      /* 파이어폭스 */
+      background-color: #87c4e8;
+      text-align: center;
+    }
+
+    #rightSideBar::-webkit-scrollbar {
+      display: none;
+      /* 크롬, 사파리, 오페라, 엣지 */
+    }
+
+    #sideMenuWrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    #sideMenuWrap>div {
+      width: 49%;
+      height: 30px;
+    }
+
+    #myMenuListContentContainer {
+      position: absolute;
+      top: 9vh;
+      right: 0;
+      background-color: #F8F9FA;
+      z-index: 5;
+      width: 300px;
+      height: 80vh;
+      text-align: center;
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      /* 인터넷 익스플로러 */
+      scrollbar-width: none;
+      /* 파이어폭스 */
+      scrollbar-width: none;
+      cursor: default;
+      border: 3px solid #a6a2a2;
+    }
+    #myMenuListContentContainer::-webkit-scrollbar {
+      display: none;
+      /* 크롬, 사파리, 오페라, 엣지 */
+    }
+
+    #messageContentBox {
+      position: absolute;
+      top: 9vh;
+      right: 0;
+      background-color: #F8F9FA;
+      z-index: 5;
+      width: 300px;
+      height: 80vh;
+      text-align: center;
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      /* 인터넷 익스플로러 */
+      scrollbar-width: none;
+      /* 파이어폭스 */
+      scrollbar-width: none;
+      scrollbar-width: none;
+      cursor: default;
+      border: 3px solid #a6a2a2;
+    }
+    #messageContentBox::-webkit-scrollbar {
+      display: none;
+      /* 크롬, 사파리, 오페라, 엣지 */
+    }
+
+    .myBoardContent {
+      line-height: 30px;
+      width: 100%;
+      margin-bottom: 5px;
+      cursor: pointer;
+      text-align: left;
+      border-bottom: 1px solid #a6a2a2;
+      padding: 5px 10px;
+    }
+
+    .agreeBtn {
+      margin: 0 5px;
+    }
+
+
+    .infoWindowBox {
+      width: 150px;
+      height: 20px;
+      font-size: 12px;
+      padding: 3px;
+      text-align: center;
+      box-sizing: content-box;
+    }
+
+    .infoWindowBox a {
+      line-height: 23px;
+    }
+
+    .secretInfoWindowBox {
+      position: relative;
+    }
+
+    .material-symbols-outlined {
+      position: absolute;
+      top: -17px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check2" viewBox="0 0 16 16">
+        <path
+          d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+      </symbol>
+      <symbol id="circle-half" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+      </symbol>
+      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+        <path
+          d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+        <path
+          d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z" />
+      </symbol>
+      <symbol id="sun-fill" viewBox="0 0 16 16">
+        <path
+          d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+      </symbol>
+    </svg>
+    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+      <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
+        aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+          <use href="#circle-half"></use>
+        </svg>
+        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+            aria-pressed="false">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#sun-fill"></use>
+            </svg>
+            Light
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+            aria-pressed="false">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#moon-stars-fill"></use>
+            </svg>
+            Dark
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+            aria-pressed="true">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#circle-half"></use>
+            </svg>
+            Auto
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary" aria-label="Main navigation">
+      <div class="container-fluid">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item ">
+            <a href="/mainPage" aria-expanded="false">
+              <img src="image/logo.jpg" alt="" width="60" height="60" class="rounded-circle">
+            </a>
+          </li>
+        </ul>
+        <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse offcanvas-collapse bg-body-tertiary" id="navbarsExampleDefault">
+
+
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="text-align: center;">
+
+            <!-- 
+              현재페이지 밝게 <a class="nav-link active" onclick="boardMap()" aria-current="page">게시판</a>
+             -->
+            <div class="vr"></div>
+            <li class="nav-item" style="width: 200px; font-size: large; ">
+              <a class="nav-link" onclick="openSearchMenu()">장소검색</a>
+            </li>
+            <div class="vr"></div>
+            <li class="nav-item" style="width: 200px; font-size: large;" aria-current="page">
+              <a class="nav-link active" onclick="boardMap()">게시판</a>
+            </li>
+            <div class="vr"></div>
+            <li class="nav-item" style="width: 200px; font-size: large;">
+              <a class="nav-link" onclick="chatMap()">채팅방</a>
+            </li>
+            <div class="vr"></div>
+            <li class="nav-item " style="width: 200px; font-size: large;">
+              <a class="nav-link " onclick="scheduleMap()">스케줄</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                aria-expanded="false">[[${nickName}]]</a>
+              <ul class="dropdown-menu dropdown-menu-end ">
+                <li><a class="dropdown-item" href="/update">개인정보</a></li>
+                <li><a class="dropdown-item" onclick="userWindowOpen()">우편함</a></li>
+                <li><a class="dropdown-item" onclick="messageListOnOff()">메세지</a></li>
+                <li><a class="dropdown-item" onclick="boardMenuOnOff()">최근 이용 게시판</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+              </ul>
+            </li>
+          </ul>
+
+
+        </div>
+      </div>
+
+      <div id="rightSideBar" style="display:none;">
+        <div id="sideMenuWrap">
+          <div id="visitMenu" onclick="boardMenuOnOff()">최근 이용 게시판</div>
+          <div id="myPost" onclick="userWindowOpen()">우편함</div>
+          <div id="directMessage" onclick="messageListOnOff()">메시지</div>
+        </div>
+      </div>
+      <div id="boardListMenu" style="display:none;">
+        <div id="myMenuListContentContainer"></div>
+      </div>
+      <div id="messageBox" style="display:none;">
+        <div id="messageContentBox"></div>
+      </div>
+
+
+    </nav>
+  </header>
+
+
+
+
+
+  <div id="mapWrap">
+    <div id="map" style="width:90vw;height:80vh;margin:auto;"></div>
+    <div class="bg_white" id="menu_wrap" style="display:none;">
+      <div class="option">
+        <div>
+          <form onsubmit="searchPlaces(); return false;">
+            키워드로 검색하기 <input id="keyword" size="15" type="text" value="">
+            <button type="submit" id="placeSearchBtn">검색하기</button>
+            <button type="button" onclick="closeSearchMenu();" id="placeSearchCloseBtn">닫기</button>
+          </form>
+        </div>
+      </div>
+      <hr>
+      <ul id="placesList"></ul>
+      <div id="pagination"></div>
+    </div>
+  </div>
+
+  <div id="boardViewWrap" class="bg-body-tertiary">
+    <h2 id="boardViewTitleHeadTag" style="text-align:center;font-size:20px;"></h2>
+    <h3 id="boardListCountHeadTag" style="text-align:left;font-size:16px;"></h3>
+    <button id="boardViewCloseBtn" onclick="boardViewExit()"></button>
+    <table id="thTopBar">
+      <tr>
+        <th class="boardFormNumber">글 번호</th>
+        <th class="boardFormTitle">제목</th>
+        <th class="boardFormWriter">작성자</th>
+        <th class="boardFormCount">조회수</th>
+        <th class="boardFormDate">작성일</th>
+      </tr>
+    </table>
+    <table id="dataTable">
+    </table>
+
+    <div id="pagingWrap">
+    </div>
+    <button id="boardDeleteBtn" style="display:none;" onclick="deleteBoard();">게시판 삭제</button>
+    <button id="writeBtn" class="cBtn" onclick="boardWriteFormDisplay()">글쓰기</button>
+    <div id="searchBar">
+      <form action="#" method="post">
+        <input id="searchWord" name="searchText" type="text" />
+        <button id="searchBtn" type="submit">검색</button>
+      </form>
+    </div>
+    <div id="boardContentWriteOverlay" style="display:none;">
+      <button id="boardContentWriteCloseBtn" onclick="boardContentWriteClose()" style="float:right;"></button>
+      <form action="/boardContentWrite" id="boardContentForm" method="post">
+        <label class="boardContentLabel" for="boardContentTitle">제목:</label>
+        <input class="boardContentinput" id="boardContentTitle" name="boardContentTitle" required type="text" />
+
+        <label class="boardContentLabel" for="boardContentWriter">글쓴이:</label>
+        <input class="boardContentinput" id="boardContentWriter" name="boardContentWriter" readonly
+          th:value="${nickName}" type="text" />
+
+        <label class="boardContentLabel" for="boardContentContent">내용:</label>
+        <textarea id="boardContentContent" name="boardContentContent" required></textarea>
+
+        <input id="boardWriteIdValue" name="boardContentBoardId" type="hidden" />
+        <input id="boardContentWriterId" name="boardContentWriterId" th:value="${userId}" type="hidden" />
+
+        <input class="boardContentSubmit" id="boardContentSubmit" onclick="boardWriteSetData()" value="게시물 작성" />
+        <input class="boardContentSubmit" id="boardContentUpdateButtonTag" style="display:none;" value="게시물 수정" />
+      </form>
+    </div>
+  </div>
+  <div id="boardCreate" style="display:none;" class="bg-body-tertiary">
+    <button id="boardCreateCloseBtn" onclick="boardCreateClose()"></button>
+    <form action="/writeBoard" id="boardCreateForm" method="post">
+      제목 :<input id="title" name="title" required type="text" maxlength="10" /> <br />
+      <input id="lat" name="lat" required type="hidden" />
+      <input id="lng" name="lng" required type="hidden" />
+      <input id="admin" name="admin" required type="hidden" />
+      <div id="searchAble">
+        검색가능여부<br />
+        <label>가능<input checked name="search" type="radio" value="1" /></label>
+        <label>불가<input name="search" type="radio" value="0" /></label>
+      </div>
+      <div id="passwordAble">
+        비밀방 여부<br />
+        <label>안비밀<input checked id="secret" name="secret" onchange="passwordOff()" type="radio" value="0" /></label>
+        <label>비밀<input name="secret" onchange="passwordON()" type="radio" value="1" /></label>
+      </div>
+      <p id="passwordForm" style="display:none;">
+        비밀번호 :<input id="password" name="password" type="password" />
+      </p>
+      <select id="category" name="category" required>
+        <option value="음식점">음식점</option>
+        <option value="주점">주점</option>
+        <option value="주거단지">주거단지</option>
+        <option value="학원">학원</option>
+        <option value="학교">학교</option>
+        <option value="여가시설">여가시설</option>
+        <option value="관공서">관공서</option>
+        <option value="카페">카페</option>
+        <option value="편의점">편의점</option>
+        <option value="관광지">관광지</option>
+        <option value="종교시설">종교시설</option>
+        <option value="도로">도로</option>
+        <option selected value="기타">기타</option>
+      </select>
+      <button class="cBtn" type="submit">만들기</button>
+    </form>
+  </div>
+  <div id="boardDetailWrap" style="display:none;" class="bg-body-tertiary">
+    <button id="boardDetailCloseBtn" onclick="boardDetailExit()" style="float:right;"></button>
+    <table id="boardDetailTable">
+    </table>
+    <button class="detailBtn" id="detailUpdateBtn" style="display:none;">수정</button>
+    <button class="detailBtn" id="boardContentDeleteBtn" style="display:none;">삭제</button>
+    <table id="boardDetailCommentTable">
+      <tr>
+        <th>댓글</th>
+      </tr>
+      <tr>
+        <th>댓글 작성자 닉네임</th>
+        <td>댓글 내용</td>
+      </tr>
+    </table>
+  </div>
+
+
+  <script
+    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ce91c2d9118a2a15e5e8e7d707649985&libraries=clusterer,services"></script>
+  <script th:inline="javascript">
+    var mapContainer = document.getElementById('map')
+    var mapOption = {
+      center: new kakao.maps.LatLng(37.2680, 127.0007), // 세션 유저데이터에 저장된 좌표값을 초기값으로 넣어줄 예정
+      level: 3,
+      mapTypeId: kakao.maps.MapTypeId.ROADMAP
+    }
+
+
+    var map = new kakao.maps.Map(mapContainer, mapOption)
+
+    //--------------------------------------------------장소검색 API--------------------------------------------------------------------------------
+    var markers2 = [];
+    var ps = new kakao.maps.services.Places();
+    var infowindow2 = new kakao.maps.InfoWindow({ zIndex: 1 });
+    function searchPlaces() {
+
+      var keyword = document.getElementById('keyword').value;
+
+      if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('키워드를 입력해주세요!');
+        return false;
+      }
+
+
+
+      // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+      ps.keywordSearch(keyword, placesSearchCB);
+    }
+    function placesSearchCB(data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+
+        // 정상적으로 검색이 완료됐으면
+        // 검색 목록과 마커를 표출합니다
+        displayPlaces(data);
+
+        // 페이지 번호를 표출합니다
+        displayPagination(pagination);
+
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+        alert('검색 결과가 존재하지 않습니다.');
+        return;
+
+      } else if (status === kakao.maps.services.Status.ERROR) {
+
+        alert('검색 결과 중 오류가 발생했습니다.');
+        return;
+
+      }
+    }
+    // 검색 결과 목록과 마커를 표출하는 함수입니다
+    function displayPlaces(places) {
+
+      var listEl = document.getElementById('placesList'),
+        menuEl = document.getElementById('menu_wrap'),
+        fragment = document.createDocumentFragment(),
+        bounds = new kakao.maps.LatLngBounds(),
+        listStr = '';
+      removeAllChildNods(listEl);
+
+
+
+      for (var i = 0; i < places.length; i++) {
+
+        // 마커를 생성하고 지도에 표시합니다
+        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+          marker = addMarker2(placePosition, i),
+          itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        bounds.extend(placePosition);
+
+        // 마커와 검색결과 항목에 mouseover 했을때
+        // 해당 장소에 인포윈도우에 장소명을 표시합니다
+        // mouseout 했을 때는 인포윈도우를 닫습니다
+        (function (marker, title) {
+          kakao.maps.event.addListener(marker, 'mouseover', function () {
+            displayInfowindow(marker, title);
+          });
+
+          kakao.maps.event.addListener(marker, 'mouseout', function () {
+            infowindow2.close();
+          });
+
+          itemEl.onmouseover = function () {
+            displayInfowindow(marker, title);
+          };
+
+          itemEl.onmouseout = function () {
+            infowindow2.close();
+          };
+        })(marker, places[i].place_name);
+
+        fragment.appendChild(itemEl);
+      }
+
+      // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
+      listEl.appendChild(fragment);
+      menuEl.scrollTop = 0;
+
+      // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+      map.setBounds(bounds);
+    }
+    // 검색결과 항목을 Element로 반환하는 함수입니다
+    function getListItem(index, places) {
+
+      var el = document.createElement('li'),
+        itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+          '<div class="info">' +
+          '   <h5>' + places.place_name + '</h5>';
+
+      if (places.road_address_name) {
+        itemStr += '    <span>' + places.road_address_name + '</span>' +
+          '   <span class="jibun gray">' + places.address_name + '</span>';
+      } else {
+        itemStr += '    <span>' + places.address_name + '</span>';
+      }
+
+      itemStr += '  <span class="tel">' + places.phone + '</span>' +
+        '</div>';
+
+      el.innerHTML = itemStr;
+      el.className = 'item';
+
+      return el;
+    }
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    function addMarker2(position, idx, title) {
+      var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+        imgOptions = {
+          spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+          spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+          offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+        marker = new kakao.maps.Marker({
+          position: position, // 마커의 위치
+          image: markerImage
+        });
+
+      marker.setMap(map); // 지도 위에 마커를 표출합니다
+      markers2.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+      return marker;
+    }
+    // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+    function removeMarker() {
+      for (var i = 0; i < markers2.length; i++) {
+        markers2[i].setMap(null);
+      }
+      markers2 = [];
+    }
+    // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+    function displayPagination(pagination) {
+      var paginationEl = document.getElementById('pagination'),
+        fragment = document.createDocumentFragment(),
+        i;
+
+      // 기존에 추가된 페이지번호를 삭제합니다
+      while (paginationEl.hasChildNodes()) {
+        paginationEl.removeChild(paginationEl.lastChild);
+      }
+
+      for (i = 1; i <= pagination.last; i++) {
+        var el = document.createElement('a');
+        el.href = "#";
+        el.innerHTML = i;
+
+        if (i === pagination.current) {
+          el.className = 'on';
+        } else {
+          el.onclick = (function (i) {
+            return function () {
+              pagination.gotoPage(i);
+            }
+          })(i);
+        }
+
+        fragment.appendChild(el);
+      }
+      paginationEl.appendChild(fragment);
+    }
+    // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+    // 인포윈도우에 장소명을 표시합니다
+    function displayInfowindow(marker, title) {
+      var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+      infowindow2.setContent(content);
+      infowindow2.open(map, marker);
+    }
+
+    // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+    function removeAllChildNods(el) {
+      while (el.hasChildNodes()) {
+        el.removeChild(el.lastChild);
+      }
+    }
+    function closeSearchMenu() {
+      var listEl = document.getElementById('placesList')
+      var menuEl = document.getElementById('menu_wrap');
+      removeAllChildNods(listEl);
+      menuEl.style.display = 'none';
+      removeMarker();
+    }
+    function openSearchMenu() {
+      var menuEl = document.getElementById('menu_wrap');
+      menuEl.style.display = 'block';
+    }
+
+
+    function myBoardListView() {
+      var menuContainer = document.getElementById('myMenuListContentContainer');
+      var sideMenu = document.getElementById('boardListMenu');
+      $.ajax({
+        type: 'get',
+        url: '/myBoardVisitHistory?userId=' + userId,
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          menuContainer.textContent = "";
+          if (data != null && data != "") {
+            for (var i = 0; i < data.length; i++) {
+              var listBuild = '<div class="myBoardContent" onclick="boardJoin(' + data[i].boardId + ')">' + data[i].boardTitle + '</div>';
+              $("#myMenuListContentContainer").append(listBuild);
+            }
+          }
+        }
+      })
+    }
+    //--------------------------------------------------장소검색 API--------------------------------------------------------------------------------
+
+
+    // Kakao Maps SDK 로딩이 완료되면 실행
+    window.onload = function () {
+      event.preventDefault();
+
+
+      var clusterer = new kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 6 // 클러스터를 최소 지도 레벨 6에서 표시
+      })
+      // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+      var mapTypeControl = new kakao.maps.MapTypeControl();
+
+      // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+      // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+      map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+      // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+      var zoomControl = new kakao.maps.ZoomControl();
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+      var infowindows = [];
+      var markers = [];
+
+      /*[# th:each="board : ${board}"]*/
+      var marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(/*[[${board.lat}]]*/, /*[[${board.lng}]]*/),
+        map: map
+      })
+      var boardTitle = /*[[${board.title}]]*/ '';
+      var boardid = /*[[${board.id}]]*/ ;
+      var boardSecret = /*[[${board.secret}]]*/;
+
+      if (boardSecret == 1) {
+        var infowindow = new kakao.maps.InfoWindow({
+          content: '<div class="infoWindowBox secretInfoWindowBox"><span class="material-symbols-outlined">lock</span><a class="infoSecret" style="margin:auto;" href="#" onclick="secretJoin(' + boardid + ')">' + boardTitle + '</a></div>',
+          removable: true,
+          zIndex: 1
+        })
+      } else {
+        var infowindow = new kakao.maps.InfoWindow({
+          content: '<div class="infoWindowBox"><a class="infoNotSecret"style="margin:auto;" href="#" onclick="boardJoin(' + boardid + ')">' + boardTitle + '</a></div>',
+          removable: true,
+          zIndex: 1
+        })
+      }
+      infowindows.push(infowindow);
+
+      markers.push({ marker: marker, infowindow: infowindow });
+
+      /*[/]*/
+      // 인포윈도우를 닫는 클로저를 만드는 함수
+      function makeOutListener(infowindow) {
+        return function () {
+          infowindow.close()
+        }
+      }
+      // 인포윈도우를 표시하는 클로저를 만드는 함수
+      function makeOverListener(map, marker, infowindow) {
+        return function () {
+          infowindow.open(map, marker)
+        }
+      }
+      for (var i = 0; i < markers.length; i++) {
+        kakao.maps.event.addListener(markers[i].marker, 'click', (function (infowindow, marker) {
+          return function () {
+            infowindow.open(map, marker);
+          };
+        })(markers[i].infowindow, markers[i].marker));
+      }
+
+
+
+
+
+      kakao.maps.event.addListener(map, 'zoom_changed', function () {
+        // 현재 줌 레벨을 가져옴
+        var currentZoomLevel = map.getLevel()
+        var lastlatlng = map.getCenter();
+
+        // 만약 줌 레벨이 5 이하라면 모든 인포 윈도우를 열어줌
+        if (currentZoomLevel > 4) {
+          for (var i = 0; i < markers.length; i++) {
+            makeOutListener(markers[i].infowindow)()
+          }
+          map.setCenter(lastlatlng);
+
+        } else {
+          for (var i = 0; i < markers.length; i++) {
+            makeOverListener(map, markers[i].marker, markers[i].infowindow)();
+          }
+          map.setCenter(lastlatlng);
+        }
+      })
+
+      clusterer.addMarkers(
+        markers.map(function (item) {
+          return item.marker
+        })
+      )
+
+      var clickMarker = new kakao.maps.Marker({
+        // 지도 중심좌표에 마커를 생성
+        position: map.getCenter()
+      })
+      var clickInfowindow = new kakao.maps.InfoWindow({
+        removable: true,
+        zIndex: 2
+      })
+      // 지도에 클릭 이벤트를 등록합니다
+      // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출
+      kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+        // 클릭한 위도, 경도 정보를 가져옴
+        var latlng = mouseEvent.latLng
+
+        // 마커 위치를 클릭한 위치로 옮깁
+        clickMarker.setPosition(latlng);
+        let clickLat = clickMarker.getPosition().getLat();
+        let clickLng = clickMarker.getPosition().getLng();
+        let adminId = /*[[${userId}]]*/;
+
+        clickInfowindow.setContent('<div class="infoWindowBox"><a style="z-index:3" onclick="createBoard(' + clickLat + ',' + clickLng + ',' + adminId + ')">게시판 생성</a></div>');
+        // 지도에 마커를 표시
+        clickMarker.setMap(map);
+
+        clickInfowindow.open(map, clickMarker)
+      })
+      map.setLevel(4);
+    }
+
+
+  </script>
+  <script>
+    //---------------------------------------------------------------------------
+    //게시판 뷰 오버레이
+    var userId = "[[${userId}]]";
+    var nickName = "[[${nickName}]]";
+    var userMenuToggle = 0;
+    var boardMenuToggle = 0;
+    var letterListToggle = 0;
+    var rightSideBar = document.getElementById('rightSideBar');
+    var boardMenu = document.getElementById('boardListMenu');
+    var messageMenu = document.getElementById('messageBox');
+
+    function boardJoin(id) {
+      userMenuToggle = 0;
+      boardMenuToggle = 0;
+      letterListToggle = 0;
+      rightSideBar.style.display = 'none';
+      boardMenu.style.display = 'none';
+      messageMenu.style.display = 'none';
+      $.ajax({
+        type: 'get',
+        url: '/board/join?id=' + id + '&userId=' + userId,
+        success: function () {
+          boardViewForm(id, 0);
+        }
+      })
+    }
+
+    function boardViewForm(id, page) {
+      var boardView = document.getElementById("dataTable");
+      boardView.textContent = "";
+      findBoardTitleById(id, function (board) {
+        var boardTitle = board.title;
+        var boardTitleTag = document.getElementById("boardViewTitleHeadTag");
+        boardTitleTag.textContent = boardTitle;
+        var boardListCountTag = document.getElementById("boardListCountHeadTag");
+        boardListCountTag.textContent = '방문자 :' + board.count;
+        var boardWriteIdValue = document.getElementById("boardWriteIdValue");
+        boardWriteIdValue.value = id;
+        var boardDeleteBtn = document.getElementById("boardDeleteBtn");
+
+        if (board.admin == userId) {
+          boardDeleteBtn.style.display = 'block';
+          boardDeleteBtn.setAttribute("onClick", "boardDelete(" + board.id + ")");
+        } else {
+          boardDeleteBtn.style.display = 'none';
+          boardDeleteBtn.removeAttribute("onClick");
+        }
+        $(document).ready(function () {
+          var dataTable = $("#dataTable");
+          $.ajax({
+            type: 'post',
+            url: '/boardTableView?page=' + page + '&boardId=' + id,
+            dataType: 'json',
+            success: function (data) {
+              for (var i = 0; i < data.content.length; i++) {
+                var date = new Date(data.content[i].regdate.replace(' ', 'T')); // Date 객체로 변환
+                var tableBuild = "<tr>";
+                tableBuild += "<td class='boardFormNumber'>" + data.content[i].id + "</td>";
+                tableBuild += "<td class='boardFormTitle'><a onclick='readMore(" + data.content[i].id + ")'>" + data.content[i].title + "</a></td>";
+                tableBuild += "<td class='boardFormWriter'>" + data.content[i].writer + "</td>";
+                tableBuild += "<td class='boardFormCount'>" + data.content[i].count + "</td>";
+                tableBuild += "<td class='boardFormDate'>" + formatDate(date) + "</td>";
+                tableBuild += "</tr>"
+                $('#dataTable').append(tableBuild);
+              }
+              var pagingWrap = document.getElementById("pagingWrap");
+              pagingWrap.textContent = "";
+              if (((data.number - data.number % 10) + 10) > data.totalPages) {
+                if ((data.number - data.number % 10) != 0) {
+                  let boardBackBtn = "<a onclick='boardViewForm(" + id + "," + ((data.number - data.number % 10) - 10) + ")'>&lt;&lt;</a>";
+                  $('#pagingWrap').append(boardBackBtn);
+                }
+                for (var i = (data.number - data.number % 10) + 1; i <= data.totalPages; i++) {
+                  var pageBuild = "<a onclick='boardViewForm(" + id + "," + (i - 1) + ");'>" + i + "</a>";
+                  $('#pagingWrap').append(pageBuild);
+
+                  if (data.number + 1 == i) {
+                    $('.boardOnPage').removeClass('boardOnPage');
+                    pagingWrap.lastChild.className += "boardOnPage";
+                  }
+                }
+              } else {
+                if ((data.number - data.number % 10) != 0) {
+                  let boardBackBtn = "<a onclick='boardViewForm(" + id + "," + ((data.number - data.number % 10) - 10) + ")'>&lt;&lt;</a>";
+                  $('#pagingWrap').append(boardBackBtn);
+                }
+                for (var i = (data.number - data.number % 10) + 1; i <= ((data.number - data.number % 10) + 10); i++) {
+                  var pageBuild = "<a onclick='boardViewForm(" + id + "," + (i - 1) + ");'>" + i + "</a>";
+                  $('#pagingWrap').append(pageBuild);
+
+                  if (data.number + 1 == i) {
+                    $('.boardOnPage').removeClass('boardOnPage');
+                    pagingWrap.lastChild.className += "boardOnPage";
+                  }
+                }
+                if ((data.totalPages - data.totalPages % 10) > (data.number - data.number % 10)) {
+                  let boardNextBtn = "<a onclick='boardViewForm(" + id + "," + ((data.number - data.number % 10) + 10) + ")'>&gt;&gt;</a>";
+                  $('#pagingWrap').append(boardNextBtn);
+                }
+              }
+            }
+          })
+
+        })
+      })
+      var titleHeadTag = document.getElementById("boardViewTitleHeadTag");
+      var dataViewOverLay = document.getElementById("boardViewWrap");
+      dataViewOverLay.style.display = "block";
+    }
+    function secretJoin(id) {
+      $.ajax({
+        type: 'get',
+        url: '/boardPasswordCheck?boardId=' + id + '&userId=' + userId,
+        dataType: 'json',
+        success: function (data) {
+          if (data == '-1') {
+            boardJoin(id);
+          } else {
+            if (data == prompt("비밀번호를 입력해 주세요.")) {
+              boardJoin(id);
+            } else {
+              alert("비밀번호가 틀렸습니다.");
+            }
+          }
+        }
+      })
+
+    }
+    function formatDate(date) {
+      var year = date.getFullYear();
+      var month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1, 2자리로 패딩
+      var day = String(date.getDate()).padStart(2, '0'); // 날짜, 2자리로 패딩
+
+      return `${year}-${month}-${day}`;
+    }
+    function boardViewExit() {
+      var dataViewOverLay = document.getElementById("boardViewWrap");
+      dataViewOverLay.style.display = "none";
+    }
+    //---------------------------------------------------------------------------
+
+    //게시판 생성 오버레이
+    var passwordForm = document.getElementById('passwordForm');
+    var passwordInput = document.getElementById('password');
+    var createBoardForm = document.getElementById("boardCreate");
+    function passwordON() {
+      passwordForm.style.display = "block";
+      passwordInput.value = null;
+    }
+    function passwordOff() {
+      passwordForm.style.display = "none"
+      passwordInput.value = null;
+    }
+    function boardCreateClose() {
+      createBoardForm.style.display = 'none';
+      var inputTitle = document.getElementById("title");
+      inputTitle.value = null;
+      var inputpassword = document.getElementById("password");
+      inputpassword.value = null;
+
+    }
+    function createBoard(lat, lng, id) {
+      let inputAdmin = document.getElementById("admin");
+      let inputLat = document.getElementById("lat");
+      let inputLng = document.getElementById("lng");
+
+      inputAdmin.value = id;
+      inputLat.value = lat;
+      inputLng.value = lng;
+
+      createBoardForm.style.display = "block";
+      document.getElementById("title").focus();
+    }
+
+    // 여기서부터는 게시글 생성 오버레이 관련 함수입니다.
+    function boardWriteFormDisplay() {
+      var boardContentWriteOverlay = document.getElementById("boardContentWriteOverlay");
+      boardContentWriteOverlay.style.display = "block";
+    }
+    function boardWriteSetData() {
+      if ($('#boardContentTitle').val() == "" || $('#boardContentTitle').val() == null) {
+        alert("제목을 입력해 주세요.");
+      } else if ($('#boardContentContent').val() == "" || $('#boardContentContent').val() == null) {
+        alert("내용을 입력해 주세요");
+      } else {
+        var boardId = $('#boardWriteIdValue').val();
+        var userid = $('#boardContentWriterId').val();
+        $.ajax({
+          type: 'post',
+          url: '/boardContentWrite?id=' + userid + '&boardId=' + boardId,
+          data: $('#boardContentForm').serialize(),
+          success: function () {
+            boardContentWriteClose();
+            boardViewForm(boardId, 0)
+          }
+        })
+
+      }
+    }
+    function boardWriteFormValueReset() {
+      document.getElementById("boardContentTitle").value = "";
+      document.getElementById("boardContentContent").value = "";
+    }
+    function boardContentWriteClose() {
+      var boardContentWriteOverlay = document.getElementById("boardContentWriteOverlay");
+      boardWriteFormValueReset();
+      boardContentWriteOverlay.style.display = "none";
+    }
+    //아이디로 게시판 타이틀 가져오기 함수
+    function findBoardTitleById(id, callback) {
+      $.ajax({
+        type: 'get',
+        url: '/findBoardListById?id=' + id,
+        dataType: 'json',
+        success: function (data) {
+          callback(data);
+        }
+      })
+    }
+    function boardDelete(id) {
+      if (confirm("게시판을 삭제하시겠습니까? 게시글과 댓글도 모두 삭제됩니다.")) {
+        $.ajax({
+          type: 'get',
+          url: '/boardDelete?id=' + id,
+          success: function () {
+            console.log('보드 삭제 성공');
+            location.reload();
+          }
+        })
+      }
+
+    }
+    //---------------------------------------------------------------------------
+
+    //게시판 상세보기 오버레이
+
+
+
+    function readMore(id) {
+      var dataTable = document.getElementById("boardDetailTable");
+      var boardDetailOverLay = document.getElementById("boardDetailWrap");
+      boardDetailOverLay.style.display = 'block';
+      dataTable.textContent = "";
+
+      $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: '/readMore?id=' + id,
+        success: function (data) {
+          var date = new Date(data.regdate.replace(' ', 'T'));
+
+          var detailBuild = "<tr><th colspan='2' class='boardDetailTitle'>" + data.title + "</th></tr>";
+          detailBuild += "<tr><td class='boardDetailWriter' style='text-align:center'>" + data.writer + "</td>";
+          detailBuild += "<td class='boardDetailWriter' style='text-align:right;'>" + formatDate(date) + "</td></tr>";
+          detailBuild += "<tr><td colspan='2' style='height:500px;' class='boardDetailContent'>" + data.content + "</td></tr>";
+
+          if (userId == data.writerid) {
+            var detailUpdateBtn = document.getElementById("detailUpdateBtn");
+            detailUpdateBtn.setAttribute("onclick", "boardContentUpdate(" + id + ")");
+            var boardContentDeleteBtn = document.getElementById("boardContentDeleteBtn");
+            boardContentDeleteBtn.setAttribute("onclick", "boardContentDelete(" + id + ")");
+            detailUpdateBtn.style.display = "block";
+            boardContentDeleteBtn.style.display = "block";
+          }
+          $('#boardDetailTable').append(detailBuild);
+          boardDetailCommentBuild(id);
+        }
+      })
+    }
+
+    function boardDetailExit() {
+      let boardDetailForm = document.getElementById("boardDetailWrap");
+      boardDetailForm.style.display = 'none';
+      document.getElementById("detailUpdateBtn").style.display = 'none';
+      document.getElementById("boardContentDeleteBtn").style.display = 'none';
+      boardViewForm($('#boardWriteIdValue').val(), 0);
+    }
+
+
+    // 여기부턴 게시글 수정 및 삭제에 대한 함수입니다.
+    function boardContentUpdate(id) {
+      if (confirm("글을 수정하시겠습니까?")) {
+        $.ajax({
+          type: 'get',
+          url: '/boardContentLoad?id=' + id,
+          dataType: 'json',
+          success: function (data) {
+            var boardContentWriteOverlay = document.getElementById("boardContentWriteOverlay");
+            boardContentWriteOverlay.style.display = "block";
+            document.getElementById("boardContentUpdateButtonTag").style.display = "block";
+            document.getElementById("boardContentSubmit").style.display = "none";
+            document.getElementById("boardContentUpdateButtonTag").setAttribute("onclick", "boardContentUpdateWrite(" + data.id + ")");
+            document.getElementById("boardContentTitle").value = data.title;
+            document.getElementById("boardContentContent").value = data.content;
+            boardDetailExit();
+          }
+        })
+      }
+    }
+
+    function boardContentUpdateWrite(id) {
+
+      if ($('#boardContentTitle').val() == "" || $('#boardContentTitle').val() == null) {
+        alert("제목을 입력해 주세요.");
+      } else if ($('#boardContentContent').val() == "" || $('#boardContentContent').val() == null) {
+        alert("내용을 입력해 주세요");
+      } else {
+        $.ajax({
+          type: 'post',
+          url: '/boardContentUpdate?id=' + id,
+          data: $('#boardContentForm').serialize(),
+          dataType: 'json',
+          success: function (data) {
+            console.log(data);
+            alert("수정이 완료되었습니다.");
+            document.getElementById("boardContentUpdateButtonTag").style.display = "none";
+            document.getElementById("boardContentSubmit").style.display = "block";
+            boardContentWriteClose();
+            document.getElementById("boardContentTitle").value = "";
+            document.getElementById("boardContentContent").value = "";
+            boardViewForm(data, 0);
+          }
+
+        })
+      }
+
+    }
+    function boardContentDelete(id) {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        $.ajax({
+          type: 'get',
+          url: '/boardContentDelete?id=' + id,
+          success: function () {
+            alert("삭제가 완료되었습니다.");
+            boardDetailExit();
+          }
+        })
+      }
+    }
+    //---------------------------------------------------------------------------
+    // 댓글창 관련 함수입니다.
+
+    function boardDetailCommentBuild(id) {
+      var commentTable = document.getElementById("boardDetailCommentTable");
+      commentTable.textContent = "";
+      $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: '/boardComment?id=' + id,
+        success: function (data) {
+          console.log(data);
+          var inputBuild = "<div class='commentBox'>";
+          // 아래 input 태그 value 에 세션 name값을 넣어야함
+          inputBuild += "<form id='commentWriteForm'><input id='nn' type='text' name='writer' value='" + nickName + "' readonly>";
+          inputBuild += "<input type='text' name='commentInput' id='commentInput' placeholder='댓글을 입력하세요'>";
+          // 아래 input 태그 value에 세션 아이디값을 넣어야함
+          inputBuild += "<input type='hidden' name='writerId' value='" + userId + "'>";
+          inputBuild += "<button id='CMI' onclick='commentWrite(" + id + ")'>등록</button>";
+          inputBuild += "</form></div>";
+          $('#boardDetailCommentTable').append(inputBuild);
+          for (i = 0; i < data.length; i++) {
+            var build = "<tr><th>" + data[i].writer + "</th><td>" + data[i].commentContent + "</td>";
+            var date = new Date(data[i].regdate.replace(' ', 'T'));
+            build += "<td>" + commentFormatDate(date);
+            // 삭제 버튼은 세션 아이디와 data[i].writerId가 동일할 때 조건으로 만들어지게 설정
+            if (data[i].writerId == userId) {
+              build += "  <button id='CDC' style='border-radius:30%;' onclick='commentDelete(" + data[i].id + "," + id + ")'></button></td></tr>";
+            }
+            $('#boardDetailCommentTable').append(build);
+          }
+        }
+      })
+
+    }
+    function commentWrite(id) {
+      event.preventDefault();
+      if ($('#commentInput').val() == "" || $('#commentInput').val() == null) {
+        alert("댓글을 입력해 주세요");
+      } else {
+        if (confirm('댓글을 작성하시겠습니까?')) {
+          $.ajax({
+            type: 'post',
+            data: $('#commentWriteForm').serialize(),
+            url: '/boardCommentWrite?id=' + id,
+            success: function () {
+              boardDetailCommentBuild(id);
+            }
+          })
+        }
+      }
+
+    }
+    function commentDelete(id, contentId) {
+      event.preventDefault();
+      if (confirm('댓글을 삭제하시겠습니까?')) {
+        $.ajax({
+          type: 'get',
+          url: '/boardCommentDelete?id=' + id,
+          success: function () {
+            boardDetailCommentBuild(contentId);
+          }
+        })
+      }
+    }
+    function commentFormatDate(date) {
+      var month = String(date.getMonth() + 1).padStart(2, '0');
+      var day = String(date.getDate()).padStart(2, '0');
+      var hour = String(date.getHours()).padStart(2, '0');
+      var min = String(date.getMinutes()).padStart(2, '0');
+      return month + '/' + day + ' ' + hour + ':' + min;
+    }
+    //---------------------------------------------------------------------------
+    //-------------------- --------------------사이드바 메뉴 관련 함수----------------------------------------
+
+    function viewSideBar() {
+      rightSideBar.style.display = 'block';
+      rightSideBar.style.zIndex = '5';
+    }
+    function closeSideBar() {
+      rightSideBar.style.display = 'none';
+      boardMenu.style.display = 'none';
+      messageMenu.style.display = 'none';
+    }
+
+    function userMenuToggleView() {
+      if (userMenuToggle == 0) {
+        viewSideBar()
+        userMenuToggle = 1;
+      } else {
+        closeSideBar();
+        userMenuToggle = 0;
+        boardMenuToggle = 0;
+        letterListToggle = 0;
+      }
+    }
+
+    function boardMenuOnOff() {
+      if (boardMenuToggle == 0) {
+        boardMenu.style.display = 'block';
+        boardMenuToggle = 1;
+        letterListToggle = 0;
+        messageMenu.style.display = 'none';
+        myBoardListView();
+
+      } else {
+        boardMenu.style.display = 'none';
+        boardMenuToggle = 0;
+        var menuContainer = document.getElementById('myMenuListContentContainer');
+        menuContainer.textContent = "";
+      }
+    }
+    function messageListOnOff() {
+      if (letterListToggle == 0) {
+        messageMenu.style.display = 'block';
+        boardMenu.style.display = 'none';
+        boardMenuToggle = 0;
+        letterListToggle = 1;
+        letterListView();
+
+      } else {
+        messageMenu.style.display = 'none';
+        letterListToggle = 0;
+        var menuContainer = document.getElementById('messageContentBox');
+        menuContainer.textContent = "";
+      }
+    }
+    function myBoardListView() {
+      var menuContainer = document.getElementById('myMenuListContentContainer');
+      var sideMenu = document.getElementById('boardListMenu');
+      $.ajax({
+        type: 'get',
+        url: '/myBoardVisitHistory?userId=' + userId,
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          menuContainer.textContent = "";
+          if (data != null && data != "") {
+            for (var i = 0; i < data.length; i++) {
+              var listBuild = '<div class="myBoardContent" onclick="boardJoin(' + data[i].boardId + ')">' + data[i].boardTitle + '</div>';
+              $("#myMenuListContentContainer").append(listBuild);
+            }
+          }
+        }
+      })
+    }
+    function updateUserInfo() {
+      location.href = "/update";
+    }
+    var letterListToggle = 0;
+
+
+    function userWindowOpen() {
+      window.open('/userMenu/userwindow', '우편함', "width = 450px,height = 600px, top = 50px, left = 100px, scrollbars = no, location = no,scrollbars = no")
+    }
+
+    function letterListView() {
+      var menuContainer = document.getElementById('messageContentBox');
+      var sideMenu = document.getElementById('messageBox');
+      $.ajax({
+        type: 'get',
+        url: '/friendRequestCheck?userId=' + userId,
+        dataType: 'json',
+        success: function (data) {
+          menuContainer.textContent = "";
+          if (data != null && data != "" && data.length != 0) {
+            for (var i = 0; i < data.length; i++) {
+              var listBuild = '<div class="myBoardContent"">' + data[i].fromNickname + '님으로부터의 친구요청</div>';
+              listBuild += '<button class="agreeBtn" onclick="agreeRequest(' + data[i].id + ',1)">수락</button>';
+              listBuild += '<button class="agreeBtn" onclick="agreeRequest(' + data[i].id + ',0)">거절</button>';
+              $("#messageContentBox").append(listBuild);
+            }
+          }else{
+            var listBuild = '<div class="myBoardContent"">메시지가 없습니다.</div>';
+            $("#messageContentBox").append(listBuild);
+          }
+        }
+      })
+    }
+    function agreeRequest(id, answer) {
+      $.ajax({
+        type: 'get',
+        url: '/friendRequestAnswer?id=' + id + '&type=' + answer,
+        dataType: 'json',
+        success: function (data) {
+          if (data == 0) {
+            alert("거절하셨습니다.");
+          } else {
+            alert("수락하셨습니다.");
+          }
+          letterListView();
+        }
+      })
+    }
+
+    //-------------------- --------------------사이드바 메뉴 관련 함수----------------------------------------
+
+
+  </script>
+
+
+  <!-- bootstrap.bundle.min -->
+  <script src="assets/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+  <!-- color-mode -->
+  <script src="assets/js/color-modes.js" type="text/javascript"></script>
+  <!-- offcanvas-navbar -->
+  <script src="js/offcanvas-navbar.js" type="text/javascript"></script>
+  <!-- index -->
+  <script src="js/index.js" type="text/javascript"></script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<title>중복 체크</title>
+</head>
+<style>
+	#useBtn, #cancelBtn, #idCheckBtn{
+
+	}
+
+	#wrap{
+		padding : 10px;
+
+	}
+	#msg{
+		margin-top : 10px;
+		height :20px;
+
+	}
+</style>
+
+<body onload="pValue()">
+<div id="wrap">
+	<br>
+	<b>아이디 중복체크</b>
+	<hr>
+	<br>
+	<div id="chk">
+		<form id="checkForm">
+			<input type="text" name="idinput" id="userId">
+			<button id= "idCheckBtn" onClick="return idCheck()">중복확인 </button>
+
+		</form>
+		<div id="msg"></div>
+		<br>
+		<div id="selectBox">
+			<input type="button" id="cancelBtn" value="취소" onClick="window.close()" >
+			<input type="button" id="useBtn" value="사용하기" onClick="sendCheckValue()" style="visibility:hidden;">
+		</div>
+	</div>
+</div>
+
+</body>
+<script>
+
+	// httpRequest 객체 생성
+	function getXMLHttpRequest(){
+		var httpRequest = null;
+
+		if(window.ActiveXObject){
+			try{
+				httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch(e) {
+				try{
+					httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e2) { httpRequest = null; }
+			}
+		}
+		else if(window.XMLHttpRequest){
+			httpRequest = new window.XMLHttpRequest();
+		}
+		return httpRequest;
+	}
+function pValue(){
+	document.getElementById("userId").value = opener.document.userinfo.userid.value;
+}
+
+function idCheck(){
+	var id = document.getElementById("userId").value;
+	var idchk = /^[a-z0-9]{4,20}$/;
+
+	if(id.length==0 || id==''){
+		document.getElementById("msg").innerHTML = '아이디를 입력해주세요';
+		return false;
+	}else if(!idchk.test(id)){
+		document.getElementById("msg").innerHTML = '한글 및 특수문자는 아이디로 사용할수없습니다.';
+		return false;
+	}else if(id.length < 4){
+		document.getElementById("msg").innerHTML = '아이디가 4글자 이상이어야 합니다.';
+		return false;
+	}else{
+
+		var param = id;
+
+		httpRequest = getXMLHttpRequest();
+		httpRequest.onreadystatechange = callback;
+		httpRequest.open("POST","/userIdChk?userid="+id,true);
+		httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		httpRequest.send(param);
+		return false;
+	}
+}
+
+
+
+function callback(){
+			if(httpRequest.readyState == 4){
+				// 결과값을 가져온다.
+
+				var resultText = httpRequest.responseText;
+
+				if(resultText == 0){
+
+					document.getElementById("useBtn").style.visibility='hidden';
+					document.getElementById("msg").innerHTML = "중복된 아이디입니다.";
+
+				}
+				else if(resultText == 1){
+					document.getElementById("useBtn").style.visibility='visible';
+					document.getElementById("msg").innerHTML = "사용가능한 아이디입니다.";
+
+				}
+			}
+		}
+
+
+function sendCheckValue(){
+			// 중복체크 결과인 idCheck 값을 전달한다.
+			opener.document.userinfo.idChkResult.value ="idCheck";
+			// 회원가입 화면의 ID입력란에 값을 전달
+			opener.document.userinfo.userid.value = document.getElementById("userId").value;
+
+
+			if (opener != null) {
+            	opener.chkForm = null;
+            	self.close();
+			}
+		}
+</script>
+</html>

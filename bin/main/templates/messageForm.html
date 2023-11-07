@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <title>나의 우편함</title>
+</head>
+<style>
+    h3{
+        text-align: center;
+    }
+
+#nickSearchBtn,#idSearchBtn{
+    background-color: #a9d6e5;
+            border: none;
+            border-radius: 5px;
+            padding: 4px;
+
+}
+#nickSearchBtn:hover,#idSearchBtn:hover{
+    background-color:  #2a6f97;
+            color: #fff;
+}
+  .requestField button{
+
+    background-color: #95d5b2  ;
+            border: none;
+            border-radius: 5px;
+            padding: 4px;
+}
+.requestField button:hover{
+    background-color: #52b788;
+            color: #fff;
+}
+.userDelete button{
+
+        background-color: #ffcad4;
+            border: none;
+            border-radius: 5px;
+            padding: 4px;
+}
+.userDelete button:hover{
+
+        background-color:  #510f1f;
+            color: #fff;
+}
+
+
+
+</style>
+<body>
+
+<section>
+    <div>
+        <h3>친구 목록</h3>
+        <table id="friendList"></table>
+    </div>
+    <hr>
+    <div id="searchMenu">
+        <h4>아이디로 검색하기</h4>
+        <form onsubmit="return false;">
+            <input type="text" name="userId" id="userIdInput">
+            <button onclick="searchById()" type="button" id="idSearchBtn">검색</button>
+        </form>
+        <table id="idSearchResult"></table>
+        <hr>
+        <h4>닉네임으로 검색하기</h4>
+        <form onsubmit="return false;">
+            <input type="text" name="nickname" id="nicknameInput">
+            <button onclick="searchByNick()" type="button" id="nickSearchBtn">검색</button>
+        </form>
+        <table id="nickSearchResult"></table>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    const userId = /*[[${userId}]]*/;
+    const userNick = /*[[${userNick}]]*/;
+    friendListView();
+    function friendListView() {
+        $.ajax({
+            type: 'get',
+            url: '/myFriendListView?id=' + userId,
+            dataType: 'json',
+            success: function (data) {
+                var tableBuild = '<tr><th>아이디</th><th>닉네임</th><th>이메일</th><th>요청</th></tr>';
+                $("#friendList").append(tableBuild)
+                for (var i = 0; i < data.length; i++) {
+                    tableBuild = "<tr>";
+                    tableBuild += "<td class='userIdField'>" + data[i].userid + "</td>";
+                    tableBuild += "<td class='userNickField'>" + data[i].nickname + "</td>";
+                    tableBuild += "<td class='userEmail'>" + data[i].email + "</td>";
+                    tableBuild += "<td class='userDelete'><button  onclick='friendDelete(" + data[i].id + ")'>친구삭제</button></td>";
+                    tableBuild += '</tr>';
+                    $("#friendList").append(tableBuild);
+                }
+            }
+        })
+    }
+
+
+    function searchById() {
+        var table = document.getElementById("idSearchResult");
+        var userIdInput = document.getElementById("userIdInput").value;
+        table.innerText = "";
+        if (userIdInput.length >= 2) {
+            $.ajax({
+                type: 'get',
+                url: '/searchById',
+                data: { userId: $('#userIdInput').val() },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var tableBuild = '<tr><th>아이디</th><th>닉네임</th><th>이메일</th><th>요청</th></tr>';
+                        $("#idSearchResult").append(tableBuild);
+                        for (var i = 0; i < data.length; i++) {
+                            tableBuild = "<tr>";
+                            tableBuild += "<td class='userIdField'>" + data[i].userid + "</td>";
+                            tableBuild += "<td class='userNickField'>" + data[i].nickname + "</td>";
+                            tableBuild += "<td class='userEmail'>" + data[i].email + "</td>";
+                            tableBuild += "<td class='requestField'><button onclick='friendRequest(" + data[i].id + ")'>친구 요청</button></td>";
+                            tableBuild += "</tr>"
+                            $("#idSearchResult").append(tableBuild);
+                        }
+                    } else {
+                        var Message = "<tr><td colspan='3'>결과가 없습니다.</td></tr>";
+                        $("#idSearchResult").append(Message);
+                        document.getElementById("userIdInput").focus();
+                    }
+                },
+            });
+        } else {
+            var Message = "<tr><td colspan='3'>2글자 이상 입력하세요</td></tr>";
+            $("#idSearchResult").append(Message);
+            document.getElementById("userIdInput").focus();
+        }
+    }
+
+    function searchByNick() {
+        var table = document.getElementById("nickSearchResult");
+        var userIdInput = document.getElementById("nicknameInput").value;
+        table.innerText = "";
+        if (userIdInput.length >= 2) {
+            $.ajax({
+                type: 'get',
+                url: '/searchByNick',
+                data: { userNick: $('#nicknameInput').val() },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var tableBuild = '<tr><th>아이디</th><th>닉네임</th><th>요청</th></tr>';
+                        $("#nickSearchResult").append(tableBuild);
+                        for (var i = 0; i < data.length; i++) {
+                            tableBuild = "<tr>";
+                            tableBuild += "<td class='userIdField'>" + data[i].userid + "</td>";
+                            tableBuild += "<td class='userNickField'>" + data[i].nickname + "</td>";
+                            tableBuild += "<td class='userEmail'>" + data[i].email + "</td>";
+                            tableBuild += "<td class='requestField'><button onclick='friendRequest(" + data[i].id + ")'>친구 요청</button></td>";
+                            tableBuild += "</tr>"
+                            $("#nickSearchResult").append(tableBuild);
+                        }
+                    } else {
+                        var Message = "<tr><td colspan='3'>결과가 없습니다.</td></tr>";
+                        $("#nickSearchResult").append(Message);
+                        document.getElementById("nicknameInput").focus();
+                    }
+                },
+            });
+        } else {
+            var Message = "<tr><td colspan='3'>2글자 이상 입력하세요</td></tr>";
+            $("#nickSearchResult").append(Message);
+            document.getElementById("nicknameInput").focus();
+        }
+    }
+
+    function friendRequest(id) {
+        $.ajax({
+            type: 'get',
+            url: '/friendRequest',
+            data: { id: id },
+            dataType: 'json',
+            success: function (result) {
+                if (result == -1) {
+                    alert("친구 요청을 보냈습니다.");
+                } else if (result == 0) {
+                    alert("이미 요청을 보내거나 받은 상대입니다.");
+                } else if (result == -2) {
+                    alert("나에게는 보낼수 없습니다.");
+                } else {
+                    alert("이미 친구입니다.");
+                }
+
+            }
+        })
+    }
+    function friendDelete(id) {
+        if (confirm("정말 삭제하시겠어요?")) {
+            $.ajax({
+                type: 'get',
+                url: '/friendDelete',
+                data: { id: id, userId: userId },
+                dataType: 'json',
+                success: function (){
+                    alert("삭제 성공");
+                }
+            })
+
+        }
+
+    }
+
+
+</script>
+</body>
+
+</html>

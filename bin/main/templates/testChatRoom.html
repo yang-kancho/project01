@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      #chatRoomWrap {
+        width: 100%;
+        height: 100%;
+        background-color: antiquewhite;
+        position:relative;
+      }
+      #chatContentBox {
+        height: 600px;
+        overflow-y: scroll;
+      }
+      .myChatContent {
+        text-align: right;
+        font-size: 16px;
+        background-color: yellow;
+        padding: 5px;
+      }
+      .roomChatContent {
+        text-align: left;
+        font-size: 16px;
+        background-color: green;
+        padding: 5px;
+      }
+      .chatDateTime {
+        font-size: 10px;
+        margin-top: 3px;
+      }
+      #chatMemberBox {
+        position:absolute;
+        width: 200px;
+        text-align: left;
+        top:30px;
+        left:0;
+        background-color:black;
+        color:#fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chatRoomWrap" style="text-align:right;">
+      <button onclick="exitRoom()">채팅방 나가기</button>
+      <h2 style="text-align:center;" id="chatRoomTitleTag">채팅방 제목</h2>
+      <div id="chatContentBox">
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:right;">
+          '+messageTime+'<span class="myChatContent">메시지 어쩌고</span>
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+        <div class="chatDateTime" style="text-align:left;font-size:10px;">
+          <span class="roomChatContent">닉네임 어쩌고 : 메시지 어쩌고</span>'+ messageTime +'
+        </div>
+      </div>
+
+      <div id="chatMemberBox">
+        <div>채팅 참여 인원</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+        <div>누군가</div>
+      </div>
+      <div id="chatInputBox">
+        <form id="sendMessageFormTag">
+          <input type="text" name="chatContent" id="chatContentInput" />
+          <input type="hidden" name="userName" id="userNameInput" />
+          <input type="hidden" name="userId" id="userIdInput" />
+          <input type="hidden" name="roomId" id="roomIdInput" />
+          <button onclick="sendMessage()" id="sendBtn">전송</button>
+        </form>
+        <input type="hidden" name="lastId" id="lastIdInput" />
+      </div>
+    </div>
+    <script>
+        var toggle= 0;
+        function MemberButton(){
+            if(toggle === 0){
+                document.getElementById("chatMemberBox").style.display ='block';
+                toggle = 1;
+            }else{
+                document.getElementById("chatMemberBox").style.display ='none';
+                toggle = 0;
+            }
+            
+
+        }
+    </script>
+  </body>
+</html>

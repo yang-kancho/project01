@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>안갈켜줌 채팅방</title>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=51329"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    
+    #chatRoomWrap {
+      width: 550px;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    #chatContentBox {
+      height: 550px;
+      max-width: 400px;
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      /* 인터넷 익스플로러 */
+      scrollbar-width: none;
+      /* 파이어폭스 */
+    }
+    #chatContentBox::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .myChatContent {
+      border-radius: 10px;
+      text-align: right;
+      font-size: 16px;
+      background-color: rgba(255, 136, 0, 0.91);
+      padding: 5px 8px;
+      margin-left: 5px;
+      color: #ffff;
+    }
+    
+    .roomChatContent {
+      border-radius: 10px;
+      text-align: left;
+      font-size: 16px;
+      background-color: rgba(4, 173, 4, 0.91);
+      padding: 5px 8px;
+      color: #ffff;
+      margin-right: 5px;
+    }
+    
+    .roomnick {
+      font-size: 16px;
+    }
+    
+    .chatDateTime {
+      font-size: 10px;
+      margin-top: 3px;
+    }
+    
+    #chatMemberBox {
+      display: inline-block;
+      width: 200px;
+      border-right: solid 1px #eee4e1;
+      padding-top: 5px;
+    }
+    
+    #chatMemberBox div {
+      margin-left: 5px;
+    }
+    
+    #chatOut {
+      border-radius: 5px;
+      border: none;
+      background-color: #812258;
+      text-align: center;
+      line-height: 25px;
+      height: 28px;
+      margin-right: 10px;
+      letter-spacing: 1px;
+      position: absolute;
+      right: 0;
+      top: 5px;
+      color: #fff;
+    }
+    #deleteRoomBtn {
+      border-radius: 5px;
+      border: none;
+      background-color: #812258;
+      text-align: center;
+      line-height: 25px;
+      height: 28px;
+      margin-right: 10px;
+      letter-spacing: 1px;
+      position: absolute;
+      right: 0;
+      color: #fff;
+    }
+    
+    #chatOut:hover {
+      background-color: #510f1f;
+    }
+    #deleteRoomBtn:hover {
+      background-color: #510f1f;
+    }
+    
+    #chatContentInput {
+      width: 90%;
+      height: 30px;
+      margin-left: 5px;
+    }
+    
+    #sendBtn {
+      padding-top: 11px;
+      position: relative;
+      font-size: 100%;
+      width: 35px;
+      height: 30px;
+    }
+    
+    #sendBtn::before {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      color: #073fafff;
+      font-size: 24px;
+      content: '➤';
+      width: 35px;
+      height: 30px;
+    }
+    
+    .chatDateTime {
+      padding-bottom: 4px;
+    }
+  </style>
+
+  <body>
+    <div style="display: flex;">
+      <div id="chatMemberBox"></div>
+
+      <div id="chatRoomWrap" style="float: left;">
+        <button id="chatOut" onclick="exitRoom()">채팅방 나가기</button>
+        <button id="deleteRoomBtn" style="display:none;" onclick="roomDelete()">채팅방 삭제</button>
+        <h4 style="text-align:center;" id="chatRoomTitleTag"></h4>
+        <div id="chatContentBox"></div>
+      </div>
+    </div>
+    <div id="chatInputBox">
+      <form id="sendMessageFormTag">
+        <input type="text" name="chatContent" id="chatContentInput" />
+        <input type="hidden" name="userName" id="userNameInput" />
+        <input type="hidden" name="userId" id="userIdInput" />
+        <input type="hidden" name="roomId" id="roomIdInput" />
+        <button onclick="sendMessage()" id="sendBtn"></button>
+      </form>
+      <input type="hidden" name="lastId" id="lastIdInput" />
+    </div>
+
+    <script th:inline="javascript">
+    const chatRoom = /*[[${roomInfo}]]*/;
+    const userId = /*[[${userId}]]*/;
+    const userNick = /*[[${userNick}]]*/;
+    var firstMessage = /*[[${firstChatList}]]*/;
+    var lastId;
+    if (chatRoom.admin == userId) {//현재 유저가 채팅방 admin일때
+      var deleteBtn = document.getElementById("deleteRoomBtn");
+      deleteBtn.style.display = "block";
+      var exitBtn = document.getElementById("chatOut");
+      exitBtn.style.display = 'none';
+    }
+    document.getElementById("userNameInput").value = userNick;
+    document.getElementById("roomIdInput").value = chatRoom.id;
+    document.getElementById("userIdInput").value = userId;
+    var chatContentBox = document.getElementById("chatContentBox");
+    var title = document.getElementById("chatRoomTitleTag");
+    title.innerText = chatRoom.title;
+    loadMessage();
+    intervalMemberSearch();
+    setInterval(intervalMemberSearch, 5000);
+    function loadMessage() {
+      for (var i = 0; i < firstMessage.length; i++) {
+        var writernick = firstMessage[i].writerName;
+        var message = firstMessage[i].message;
+        var messageTime = chatFormatDate(firstMessage[i].regdate);
+        var writerId = firstMessage[i].writerId;
+        if (userId == writerId) {
+          var contentBuild = '<div class="chatDateTime" style="text-align:right;">' + messageTime + '<span class="myChatContent">' + message + '</span></div>';
+          $("#chatContentBox").append(contentBuild);
+        } else {
+          var contentBuild = '<div class="chatDateTime" style="text-align:left;font-size:10px;"><span class="roomnick">' + writernick + ' : </span><span class="roomChatContent">' + message + '</span>' + messageTime + '</div>';
+          $("#chatContentBox").append(contentBuild);
+        }
+      }
+      if (firstMessage && firstMessage.length > 0) {
+        lastId = firstMessage[firstMessage.length - 1].id;
+      }
+      chatContentBox.scrollTop = chatContentBox.scrollHeight;
+      document.getElementById("chatContentInput").focus();
+      setInterval(intervalLoadMessage, 1000);
+    }
+    function intervalLoadMessage() {
+      var wasScrolledToBottom = chatContentBox.scrollHeight - chatContentBox.clientHeight <= chatContentBox.scrollTop + 1;
+
+      $.ajax({
+        type: 'get',
+        url: '/chatroom/loadInterval?lastId=' + lastId + '&roomId=' + chatRoom.id + '&userId=' + userId,
+        dataType: 'json',
+        success: function (data) {
+          for (var i = 0; i < data.length; i++) {
+            var writernick = data[i].writerName;
+            var message = data[i].message;
+            var messageTime = chatFormatDate(data[i].regdate);
+            var writerId = data[i].writerId;
+            if (userId == writerId) {
+              var contentBuild = '<div class="chatDateTime" style="text-align:right;">' + messageTime + '<span class="myChatContent">' + message + '</span></div>';
+              $("#chatContentBox").append(contentBuild);
+            } else {
+              var contentBuild = '<div class="chatDateTime" style="text-align:left;font-size:10px;"><span class="roomnick">' + writernick + ' : </span><span class="roomChatContent">' + message + '</span>' + messageTime + '</div>';
+              $("#chatContentBox").append(contentBuild);
+            }
+          }
+          if (data && data.length > 0) {
+            lastId = data[data.length - 1].id;
+          }
+
+          // 스크롤바 위치 확인 후 조건문으로 스크롤 처리
+          if (wasScrolledToBottom) {
+            chatContentBox.scrollTop = chatContentBox.scrollHeight;
+            document.getElementById("chatContentInput").focus();
+          }
+        }
+      });
+    }
+    function sendMessage() {
+      event.preventDefault();
+      if ($('#chatContentInput').val() == "" || $('#chatContentInput').val() == null) {
+        alert("메시지를 입력해 주세요");
+      } else {
+        $.ajax({
+          type: 'post',
+          url: '/chatroom/sendMessage',
+          data: $('#sendMessageFormTag').serialize(),
+          success: function () {
+            console.log("전송완료");
+          }
+        })
+        chatContentBox.scrollTop = chatContentBox.scrollHeight;
+        intervalLoadMessage();
+        document.getElementById("chatContentInput").value = "";
+        document.getElementById("chatContentInput").focus();
+      }
+    }
+    function chatFormatDate(date) {
+      var format = new Date(date.replace(' ', 'T'));
+      var month = String(format.getMonth() + 1).padStart(2, '0');
+      var day = String(format.getDate()).padStart(2, '0');
+      var hour = String(format.getHours()).padStart(2, '0');
+      var min = String(format.getMinutes()).padStart(2, '0');
+      return month + '/' + day + ' ' + hour + ':' + min;
+
+    }
+
+    //채팅참여목록
+    function intervalMemberSearch() {
+      $.ajax({
+        type: 'get',
+        url: '/chatroom/memberSearch?roomId=' + chatRoom.id,
+        dataType: 'json',
+        success: function (data) {
+          var memberBuild = "<div>채팅 참여 인원</div>";
+          for (var i = 0; i < data.length; i++) {
+            memberBuild += '<div>' + data[i] + '</div>';
+          }
+          document.getElementById("chatMemberBox").innerHTML = memberBuild;
+        }
+      })
+    }
+    function exitRoom() {
+      if (confirm("정말로 채팅방을 나가시겠습니까? (채팅기록이 모두 지워집니다)")) {
+        $.ajax({
+          type: 'get',
+          url: '/chatroom/roomExit?roomId=' + chatRoom.id + '&userId=' + userId + '&userNick=' + userNick,
+          success: function () {
+            window.close();
+          }
+        })
+      }
+    }
+    function roomDelete() {
+      if (confirm("정말로 채팅방을 삭제하시겠습니까? (채팅기록이 모두 지워집니다)")) {
+        $.ajax({
+          type: 'get',
+          url: '/chatRoomDelete?roomId=' + chatRoom.id,
+          success: function () {
+            window.close();
+          }
+        })
+      }
+    }
+  </script>
+  </body>
+</html>

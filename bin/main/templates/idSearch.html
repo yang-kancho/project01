@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>아이디 찾기</title>
+</head>
+<body>
+<form>
+	등록했던 이메일 : <input type="text" id="searchEmail" name="searchEmail">
+	<div id="searchIdResult"></div>
+	<input type="button" onClick="chkSearchEmail()" value="찾기">
+</form>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+	function chkSearchEmail(){
+		var searchEmail = document.getElementById("searchEmail").value;
+
+		$.ajax({
+			url : "/idSearch",
+			type : "POST",
+			data : {email : searchEmail},
+			dataType : 'text',
+			success : function(result){
+				if(result=="null"){
+					$("#searchIdResult").html("아이디를 찾을수가 없습니다");
+
+				}else if(result!="null"){
+					alert("아이디는 "+ result + " 입니다." );
+					self.close();
+				}
+			}
+		})
+	}
+
+</script>
+</html>

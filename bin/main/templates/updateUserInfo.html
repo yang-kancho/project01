@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<style>
+	#wrap {
+		position : relative;
+		width:320px;
+		height:620px;
+		margin : auto;
+		padding : 5px 7px;
+
+		border-radius:  40px;
+		background-color : rgba(116,178,228,0.5);
+
+
+	#profile{
+		margin : 10px 5px 0;
+        padding : 12px;
+        width : auto;
+
+        height: 150px;
+        background-color : rgba(0,0,0,0.5);
+        border-radius: 30px;
+	}
+	#profileContainer{
+		padding-top : 10px;
+		padding-left : 85px;
+
+	}
+	#profileImage{
+		width :100px;
+		height: 100px;
+		margin-left : 10px;
+		background-color:white;
+		border-radius : 90px;
+	}
+	#updateImageButton{
+
+		width : 120px;
+		height : 30px;
+		border-radius : 20px;
+		background-color : rgb(186,221,231);
+		border :none;
+	}
+
+    #loginInfo {
+        margin : 10px 10px 1px 10px;
+        padding : 0 10px 5px 10px;
+        padding-left: 27px;
+        height: 280px;
+        background-color : rgba(0,0,0,0.5);
+        border-radius: 30px;
+	}
+
+	#ChkId,#ChkNickname,#ChkEmail, #Password1{
+		margin : 4px;
+		width :90%;
+		padding-left : 5px;
+		height : 28px;
+		border-radius: 7px;
+		border:0;
+	}
+
+	#msg{
+		padding : 5px 10px 0 10px;
+		height: 20px;
+		font-size : 14px;
+		color:
+	}
+
+	#insertButton, #cancelButton {
+		margin: 5px 10px 20px 10px;
+		padding: 10px 30px;
+		width:300px;
+		background-color: skyblue;
+	    color: white;
+	    border-radius: 30px;
+	    border :none;
+	}
+
+	#cancelButton{
+	 margin-top :0px;
+	}
+
+	#updateImageButton:hover, #insertButton:hover, #cancelButton:hover{
+		background-color: rgb(107,144,159);
+		border-radius: 20px;
+		cursor:pointer;
+	}
+</style>
+<body class="d-flex align-items-center py-4 bg-body-tertiary">
+	<header>
+		<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+			<symbol id="check2" viewBox="0 0 16 16">
+				<path
+						d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+			</symbol>
+			<symbol id="circle-half" viewBox="0 0 16 16">
+				<path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+			</symbol>
+			<symbol id="moon-stars-fill" viewBox="0 0 16 16">
+				<path
+						d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+				<path
+						d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z" />
+			</symbol>
+			<symbol id="sun-fill" viewBox="0 0 16 16">
+				<path
+						d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+			</symbol>
+		</svg>
+	
+		<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+			<button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
+					aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+				<svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+					<use href="#circle-half"></use>
+				</svg>
+				<span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+				<li>
+					<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+							aria-pressed="false">
+						<svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+							<use href="#sun-fill"></use>
+						</svg>
+						Light
+						<svg class="bi ms-auto d-none" width="1em" height="1em">
+							<use href="#check2"></use>
+						</svg>
+					</button>
+				</li>
+				<li>
+					<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+							aria-pressed="false">
+						<svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+							<use href="#moon-stars-fill"></use>
+						</svg>
+						Dark
+						<svg class="bi ms-auto d-none" width="1em" height="1em">
+							<use href="#check2"></use>
+						</svg>
+					</button>
+				</li>
+				<li>
+					<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+							aria-pressed="true">
+						<svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+							<use href="#circle-half"></use>
+						</svg>
+						Auto
+						<svg class="bi ms-auto d-none" width="1em" height="1em">
+							<use href="#check2"></use>
+						</svg>
+					</button>
+				</li>
+			</ul>
+		</div>
+	</header>
+	
+	
+	
+	
+	<main class="m-auto">
+		<div id="wrap">
+			<form action="/update" method="post" name="userinfo">
+				<div id="profile">
+					<div id="profileContainer">
+						<img id="profileImage" src="" alt=""/><br>
+						<input type="button" onclick="updateImage()" id="updateImageButton" value="프로필 사진 변경">
+					</div>
+				</div>
+				<div id="loginInfo">
+	
+					<input name="id" type="hidden" th:value=${id}>
+					<label for="username">Id</label>
+					<input name="userid" id="ChkId" type="text" th:value=${userid} class="w-100 py-2"  readonly>
+	
+					<input type="hidden" id="idChkResult" value="idUnCheck"/></br>
+	
+					<input type="hidden" id="imageFileName" name="imagefilename" th:value=${imagefilename}>
+	
+					<label for="username">Username</label>
+					<input name="nickname" id="ChkNickname" type="text" th:value=${nickname} placeholder="닉네임을 입력하세요" class="w-100 py-2"><br>
+					<input type="hidden" id="nickChkResult" value="nickChkResult"/>
+					<label for="email">Email</label>
+					<input name="email" id="ChkEmail" type="email" th:value=${email} placeholder="이메일을 입력하세요" class="w-100 py-2"><br>
+					<input type="hidden" id="emailChkResult" value="emailCheck"/>
+					<label for="password">Password</label>
+					<input name="password" id="Password1" type="password" class="w-100 py-2"><br>
+					<input type="hidden" id="passwordChkResult" value="emailCheck"/>
+				</div>
+	
+				<div id="msg">
+					<div id="nicknameChk" class="w-100 py-2"></div>
+					<div id="emailChk" class="w-100 py-2"></div>
+					<div id="passwordChk" class="w-100 py-2"></div>
+				</div>
+				<div id = "button">
+					<button id= "insertButton" onclick="return validateChk()">정보 수정</button>
+					<br><br>
+					<input id = "cancelButton" type="button" value="취소" onClick="history.go(-1)">
+	
+				</div>
+				<p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2023</p>
+			</form>
+	
+		</div>
+	
+	</main>
+	
+	
+	<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+	<!-- 프로필 이미지 변환 및 저장 -->
+	<script>
+		function updateImage(){ // 중복체크 페이지를 새창으로 오픈
+			window.name="parentForm";
+			window.open("/imageFile","imageFileUpload","width=500,height=250, scrollbar=no")
+		}
+		window.onload=function(){
+		 var img = document.getElementById("imageFileName").value;
+		 if(img ==""||img== null ||img=="null"){
+				document.getElementById("profileImage").src = "/image/logo.jpg";
+		 }else{
+		 document.getElementById("profileImage").src = "/profile/"+img;
+		 }
+		}
+	
+	</script>
+	<!-- 닉네임 중복 체크 -->
+	<script>
+		$('#ChkNickname').keyup(function(){
+			var nickname = $('#ChkNickname').val();
+			var originNickname = $('#originNickname').val()
+			var nicknametest = /^[가-힣A-Za-z0-9]{4,20}$/;
+	
+			$.ajax({
+				url : "/nicknameChk",
+				type : "post",
+				data : {nickname : nickname},
+				dataType : 'json',
+				success : function(nickChkResult){
+					if(nickname.length < 6 || nickname == ''){
+						$("#nicknameChk").html('닉네임은 6글자 이상이어야 합니다.');
+						document.getElementById("nickChkResult").value="nicknameUnCheck"
+					}else if(!nicknametest.test(nickname)){
+						$("#nicknameChk").html('닉네임은 특수문자를 사용할수 없습니다.');
+						document.getElementById("nickChkResult").value="nicknameUnCheck"
+					}else if(nickChkResult == "0" && nickname != originNickname){
+						$("#nicknameChk").html('이미 사용중인 닉네임입니다.');
+						document.getElementById("nickChkResult").value="nicknameUnCheck"
+					}else if(nickChkResult == "1" || nickname == originNickname){
+						$("#nicknameChk").html('');
+						document.getElementById("nickChkResult").value="nicknameCheck"
+					}
+				},
+				error: function(){
+					alert("닉네임에서 에러발생");
+				}
+			})
+		})
+	</script>
+	<!-- 이메일 중복 체크 -->
+	<script>
+		$('#ChkEmail').keyup(function(){
+			var email = $('#ChkEmail').val();
+			var originEmail = $('#originEmail').val();
+			var emailPattern =  /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+	
+			$.ajax({
+				url : "/emailChk",
+				type : "post",
+				data : {email : email},
+				dataType : 'json',
+				success : function(chkResult){
+					if(email == ''){
+						$("#emailChk").html('이메일을 입력해주세요.');
+						document.getElementById("emailChkResult").value="emailUnCheck"
+					}else if(!emailPattern.test(email)){
+						$("#emailChk").html('이메일 형식이 잘못되었습니다.');
+						document.getElementById("emailChkResult").value="emailUnCheck"
+					}else if(chkResult == "0" && email != originEmail){
+						$("#emailChk").html('이미 사용중인 이메일입니다.');
+						document.getElementById("emailChkResult").value="emailUnCheck"
+					}else if(chkResult == "1" || email == originEmail){
+						$("#emailChk").html('');
+						document.getElementById("emailChkResult").value="emailCheck"
+	
+					}
+				},
+				error: function(){
+					alert("이메일에서 에러발생");
+				}
+			})
+		})
+	</script>
+	<!-- 비밀번호 체크 -->
+	<script>
+		$('#Password1').keyup(function(){
+			var p1 = document.getElementById('Password1').value;
+			var p1Check = /(?=.*[0-9])(?=.*[a-zA-ZS])(?=.*?[#?!@$%^&*-]).{6,24}/;
+			if(p1==''){
+				$("#passwordChk").html('비밀번호가 비어있습니다.');
+				document.getElementById("passwordChkResult").value="passwordUnCheck"
+	
+			}else if(!p1Check.test(p1)){
+				$("#passwordChk").html('특수문자,영문,숫자로 6자이상 필요');
+				document.getElementById("passwordChkResult").value="passwordUnCheck"
+			}else
+				$("#passwordChk").html('이상없습니다.');
+				document.getElementById("passwordChkResult").value="passwordCheck"
+		})
+	</script>
+	<!-- 수정 -->
+	<script>
+		function validateChk() {
+	
+			var checkNickname = document.getElementById('nickChkResult').value;
+			var checkEmail = document.getElementById('emailChkResult').value;
+			var checkPassword = document.getElementById('passwordChkResult').value;
+	
+			if(checkNickname == "nicknameUnCheck"){
+				alert('닉네임을 확인해 주세요');
+				return false;
+			}
+			if(checkEmail=="emailUnCheck"){
+				alert('이메일을 확인해 주세요');
+				return false;
+			}
+			if(checkPassword == "passwordUnCheck"){
+				alert('비밀번호를 확인해 주세요');
+				return false;
+			}
+	
+			else{
+				alert("변경되었습니다");
+				return true;
+			}
+		}
+	</script>
+	<script src="assets/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+	<!-- color-mode -->
+	<script src="assets/js/color-modes.js" type="text/javascript"></script>
+	
+	
+	</body>
+	</html>
